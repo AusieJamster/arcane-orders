@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Grid,
-  Stack,
-  TextField,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
 import { IProduct } from "~/types/product.types";
 import Image from "next/image";
@@ -15,18 +6,25 @@ import Stripe from "stripe";
 import axios from "axios";
 import { loadMyStripe } from "~/utils/stripe";
 import { AddToCartBtn } from "../AddToCartBtn";
+import ConditionalWrapper from "../ConditionalWrapper";
+import { ArcaneLink } from "../ArcaneLink";
+import { numberToCurrency } from "~/utils/product";
 
 interface IProductOverviewProps {
   product: IProduct;
   imgHeight?: number;
+  linkToProduct?: boolean;
+  isMobile: boolean;
+  isTablet: boolean;
 }
 
 const ProductTile: React.FC<IProductOverviewProps> = ({
   product,
   imgHeight = 384,
+  linkToProduct = false,
+  isMobile,
+  isTablet,
 }) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const inventory = product.metadata.inventory;
   const [quantity, setQuantity] = useState<number>(1);
   const [quantityError, setQuantityError] = useState<string | null>(null);
@@ -43,26 +41,13 @@ const ProductTile: React.FC<IProductOverviewProps> = ({
     }
   };
 
-  const handlePricing = useMemo(() => {
+  const totalPrice = useMemo(() => {
     if (!product.default_price || !product.default_price.unit_amount)
       return "Error";
 
-    const numberToCurrency = (cost: number) => {
-      const str = cost.toLocaleString("au", {
-        style: "currency",
-        currency: "AUD",
-      });
-      return str[0] !== "A" ? `A${str}` : str;
-    };
-
-    const totalPrice = numberToCurrency(
+    return numberToCurrency(
       (product.default_price.unit_amount * quantity) / 100
     );
-
-    const price = numberToCurrency(product.default_price.unit_amount / 100);
-
-    if (quantity !== 1) return `${price} x ${quantity} = ${totalPrice}`;
-    else return totalPrice;
   }, [product.default_price, quantity]);
 
   const handleQuantityChangeEvent = (
@@ -96,39 +81,72 @@ const ProductTile: React.FC<IProductOverviewProps> = ({
         borderColor: theme.palette.grey[800],
         borderWidth: 1,
         borderStyle: "solid",
+        maxWidth: 1000,
+        width: "100%",
       })}
     >
-      {isMobile && (
-        <Typography variant="h1" marginBottom={2}>
-          {product.name}
-        </Typography>
+      {isTablet && (
+        <ConditionalWrapper
+          condition={linkToProduct}
+          wrapper={(children) => {
+            return (
+              <ArcaneLink href={`/products/${product.id}`}>
+                {children}
+              </ArcaneLink>
+            );
+          }}
+        >
+          <Typography variant="h1" marginBottom={2} textAlign="center">
+            {product.name}
+          </Typography>
+        </ConditionalWrapper>
       )}
       <Grid container justifyContent="space-around" alignItems="center">
-        <Grid item xs={12} md={2} lg={4}>
+        <Grid item xs={12} sm={4} lg={4}>
           <Box height={imgHeight} position="relative" overflow="hidden">
-            <Image
-              src={
-                product.images?.[0] ??
-                `https://images.unsplash.com/photo-1531685250784-7569952593d2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=${imgHeight}&q=80`
-              }
-              style={{ objectFit: "contain" }}
-              alt={product.name}
-              fill={true}
-            />
+            <ConditionalWrapper
+              condition={linkToProduct}
+              wrapper={(children) => (
+                <ArcaneLink href={`/products/${product.id}`}>
+                  {children}
+                </ArcaneLink>
+              )}
+            >
+              <Image
+                src={
+                  product.images?.[0] ??
+                  `https://images.unsplash.com/photo-1531685250784-7569952593d2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=${imgHeight}&q=80`
+                }
+                style={{ objectFit: "contain" }}
+                alt={product.name}
+                fill={true}
+              />
+            </ConditionalWrapper>
           </Box>
         </Grid>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} sm={8}>
           <Stack
             direction="column"
             justifyContent="space-between"
             spacing={2}
             sx={{ height: "100%" }}
-            padding={theme.spacing(2)}
+            padding={(theme) => theme.spacing(2)}
           >
-            {!isMobile && (
-              <Typography variant="h1" marginBottom={2}>
-                {product.name}
-              </Typography>
+            {!isTablet && (
+              <ConditionalWrapper
+                condition={linkToProduct}
+                wrapper={(children) => {
+                  return (
+                    <ArcaneLink href={`/products/${product.id}`}>
+                      {children}
+                    </ArcaneLink>
+                  );
+                }}
+              >
+                <Typography variant="h1" marginBottom={2}>
+                  {product.name}
+                </Typography>
+              </ConditionalWrapper>
             )}
             {product.description && (
               <Typography variant="body2" marginBottom={2}>
@@ -143,16 +161,34 @@ const ProductTile: React.FC<IProductOverviewProps> = ({
                 {product.metadata.category}
               </Typography>
             )}
-            {!!inventory && (
-              <Typography variant="body2" marginBottom={2}>
-                <b>Stock: </b>
-                {inventory}
-              </Typography>
-            )}
             <Stack gap={2}>
-              <Typography variant="h6" component="p">
-                {handlePricing}
-              </Typography>
+              <Stack
+                direction="row"
+                alignItems="flex-end"
+                justifyContent="space-between"
+              >
+                <Typography variant="h6" component="p">
+                  {product.default_price?.unit_amount && quantity > 1 && (
+                    <Typography
+                      component="span"
+                      marginRight={1}
+                      fontSize="small"
+                    >
+                      {`${numberToCurrency(
+                        product.default_price.unit_amount / 100
+                      )} x ${quantity} =`}
+                    </Typography>
+                  )}
+                  {totalPrice}
+                </Typography>
+                {!!inventory && (
+                  <Typography variant="body2">
+                    <b>Stock: </b>
+                    {inventory}
+                  </Typography>
+                )}
+              </Stack>
+
               {!!inventory && (
                 <TextField
                   error={quantityError !== null}

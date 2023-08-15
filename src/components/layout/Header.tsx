@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ brands }) => {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-  };
+  }; 
 
   return (
     <AppBar position="fixed">
@@ -35,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({ brands }) => {
             handleCloseNavMenu={handleCloseNavMenu}
             pages={brands}
           />
-          <TitleComponent title="Rarehunters" isMobile />
+          <TitleComponent title="Arcane Orders" isMobile />
           <DesktopMenu pages={brands} handleCloseNavMenu={handleCloseNavMenu} />
           <Tooltip title="Shopping Cart">
             <Link href="/cart">

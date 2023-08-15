@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { getStripe } from "./stripe";
 import { IProduct, IProductCreate } from "~/types/product.types";
+import axios from "axios";
 
 export const searchProduct = async (query: string, limit?: number) => {
   return await getStripe().products.search({
@@ -44,32 +45,13 @@ export const getAllActiveProducts = async () => {
   return productList;
 };
 
-export const createProduct = async ({
-  name,
-  active,
-  description,
-  images,
-  price,
-  unit_label,
-  category,
-  inventory,
-}: IProductCreate) => {
-  const product = await getStripe().products.create({
-    name,
-    active,
-    description,
-    images,
-    shippable: false,
-    default_price_data: {
-      currency: "AUD",
-      unit_amount: price,
-    },
-    unit_label,
-    metadata: {
-      category: category || null,
-      inventory: inventory || null,
-    },
-  });
+export const createProduct = async (props: IProductCreate) =>
+  await axios.post("/api/products/create", props);
 
-  return product;
+export const numberToCurrency = (cost: number) => {
+  const str = cost.toLocaleString("au", {
+    style: "currency",
+    currency: "AUD",
+  });
+  return str[0] !== "A" ? `A${str}` : str;
 };

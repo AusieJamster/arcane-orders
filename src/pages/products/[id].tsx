@@ -1,15 +1,24 @@
 import React from "react";
 import type { GetServerSideProps, NextPage } from "next";
-import ProductTile from "~/components/ProductOverview/ProductOverview";
+import ProductTile from "~/components/product-overview/ProductOverview";
 import { getProduct } from "~/utils/product";
 import { IProduct } from "~/types/product.types";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 interface ProductPageProps {
   product: IProduct;
 }
 
 const Product: NextPage<ProductPageProps> = ({ product }) => {
-  return <ProductTile product={product} />;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
+
+  return (
+    <main>
+      <ProductTile product={product} isMobile={isMobile} isTablet={isTablet} />
+    </main>
+  );
 };
 
 export default Product;

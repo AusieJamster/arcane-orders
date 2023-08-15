@@ -1,7 +1,17 @@
 import React from "react";
-import { Box, Typography, Menu, MenuItem } from "@mui/material";
+import { Box, Menu, MenuItem, Divider, Stack } from "@mui/material";
 import { PageLinks } from "~/types/layout.types";
 import MenuToggle from "./MenuToggle";
+import { ArcaneLink } from "../ArcaneLink";
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
+import { ArcaneButton } from "../common/ArcaneButton";
+import { Sign } from "crypto";
 
 interface IMobileMenuProps {
   anchorElNav: null | HTMLElement;
@@ -39,11 +49,27 @@ const MobileMenu: React.FC<IMobileMenuProps> = ({
       >
         {pages.map((page) => (
           <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-            <Typography textAlign="center" component="a" href={page.link}>
-              {page.name}
-            </Typography>
+            <ArcaneLink href={page.link}>
+              <ArcaneButton>{page.name.toUpperCase()}</ArcaneButton>
+            </ArcaneLink>
           </MenuItem>
         ))}
+        <Divider />
+        <SignedIn>
+          <Stack justifyContent="center" direction="row">
+            <UserButton />
+          </Stack>
+        </SignedIn>
+        <SignedOut>
+          <Stack direction="column">
+            <SignInButton>
+              <ArcaneButton>Sign In</ArcaneButton>
+            </SignInButton>
+            <SignUpButton>
+              <ArcaneButton>Sign Up</ArcaneButton>
+            </SignUpButton>
+          </Stack>
+        </SignedOut>
       </Menu>
     </Box>
   );

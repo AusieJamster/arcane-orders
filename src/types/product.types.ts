@@ -1,10 +1,11 @@
 import Stripe from "stripe";
 
-export interface IStripeCart {
+export interface ICart {
+  name?: string;
+  tableNumber?: string;
+  clerkId?: string;
   products: IProductWithQuantity[];
 }
-
-type IProductCategory = "food" | "drink" | "other";
 
 export interface IProductWithQuantity extends IProduct {
   quantity: number;
@@ -25,6 +26,6 @@ export interface IProductCreate {
   images: string[];
   price: number;
   unit_label: string;
-  category: IProductCategory | null;
+  category?: string;
   inventory?: number;
 }
