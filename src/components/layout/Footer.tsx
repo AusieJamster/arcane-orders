@@ -11,8 +11,6 @@ const Footer: React.FC<FooterProps> = ({ brands }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const categories: PageLinks[] = [];
-
   return (
     <Box
       sx={(theme) => ({
@@ -25,10 +23,7 @@ const Footer: React.FC<FooterProps> = ({ brands }) => {
     >
       <Grid container>
         <Grid item xs={12} md={6}>
-          <FooterList title="Brands" links={brands} />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <FooterList title="Sets" links={categories} />
+          <FooterList  links={brands} />
         </Grid>
       </Grid>
     </Box>

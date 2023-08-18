@@ -10,6 +10,7 @@ import Layout from "~/components/layout/Layout";
 import Header from "~/components/layout/Header";
 import Footer from "~/components/layout/Footer";
 import { PageLinks } from "~/types/layout.types";
+import { ClerkProvider } from "@clerk/nextjs";
 
 interface IMyAppProps extends AppProps {
   Component: React.FC;
@@ -18,21 +19,28 @@ interface IMyAppProps extends AppProps {
 }
 
 export default function MyApp({ Component, pageProps }: IMyAppProps) {
-  const brand: PageLinks[] = [];
+  const brand: PageLinks[] = [
+    {
+      name: "products",
+      link: "/products",
+    },
+  ];
 
   return (
     <Provider store={store}>
       <Head>
         <title>Arcane Orders</title>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
+        <meta name="description" content="arcane orders sells products" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       <ThemeProvider theme={Theme.dark}>
-        <Header brands={brand} />
-        <Layout>
-          <CssBaseline />
-          <Component {...pageProps} />
-        </Layout>
-        <Footer brands={brand} />
+        <ClerkProvider {...pageProps}>
+          <Layout brand={brand}>
+            <CssBaseline />
+            <Component {...pageProps} />
+          </Layout>
+        </ClerkProvider>
       </ThemeProvider>
     </Provider>
   );
