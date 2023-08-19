@@ -13,19 +13,83 @@ export interface IProductWithQuantity extends IProduct {
 
 export interface IProduct extends Omit<Stripe.Product, "metadata"> {
   metadata: {
-    category: string | null;
-    inventory?: number;
+    inventory: number;
+    cardNum: string;
   };
-  default_price: Stripe.Price;
 }
 
-export interface IProductCreate {
-  name: string;
+export interface IProductCreateRequestBody
+  extends ICardProductBase,
+    Partial<ICardMonsterProductBase> {
   active: boolean;
-  description: string;
-  images: string[];
-  price: number;
+  priceInDollars: number;
   unit_label: string;
-  category?: string;
-  inventory?: number;
+  inventory: number;
+}
+
+interface IImageInfo {
+  isPrimary: boolean;
+  url: string;
+  alt: string;
+}
+
+interface ICardProductBase {
+  productId: string;
+  priceId: string;
+  createdBy: string;
+
+  title: string;
+  set: string;
+  cardNum: string;
+  rarity: TCardRarity;
+  imgs: IImageInfo[];
+  description: string;
+  attribute: TCardAttribute; // !== SPELL || TRAP === MONSTER
+}
+
+interface ICardMonsterProductBase {
+  level: number;
+  attackValue: number;
+  defenseValue: number;
+  monsterType: TMonsterType;
+  subclass: TCardType;
+  hasEffect: boolean;
+
+  linkRating: number;
+  linkArrows: TCardLinkArrows[];
+}
+
+export interface ICardMonsterProduct
+  extends ICardMonsterProductBase,
+    ICardProductBase {}
+
+enum TCardLinkArrows {
+  "Bottom-Right",
+  "Bottom",
+  "Bottom-Left",
+}
+enum TMonsterType {
+  "Link",
+  "Xyz",
+}
+enum TCardType {
+  "Cyberse",
+  "Pyro",
+  "Warrior",
+
+  "Normal",
+  "Continuous",
+  "Quick Play Spell",
+}
+enum TCardAttribute {
+  "FIRE",
+  "SPELL",
+  "TRAP",
+}
+enum TCardRarity {
+  "Ghost Rare",
+  "Super Rare",
+  "Ultra Rare",
+  "Rare",
+  "Common",
 }

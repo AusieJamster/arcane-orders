@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { getStripe } from "./stripe";
-import { IProduct, IProductCreate } from "~/types/product.types";
+import { IProduct, IProductCreateRequestBody } from "~/types/product.types";
 import axios from "axios";
 
 export const searchProduct = async (query: string, limit?: number) => {
@@ -45,7 +45,7 @@ export const getAllActiveProducts = async () => {
   return productList;
 };
 
-export const createProduct = async (props: IProductCreate) =>
+export const createProduct = async (props: IProductCreateRequestBody) =>
   await axios.post("/api/products/create", props);
 
 export const numberToCurrency = (cost: number) => {

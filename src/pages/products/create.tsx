@@ -6,25 +6,27 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useState } from "react";
-import { IProductCreate } from "~/types/product.types";
+import { IProductCreateRequestBody } from "~/types/product.types";
 import { createProduct } from "~/utils/product";
 
 interface CreateProductProps {}
 
 const CreateProduct: React.FC<CreateProductProps> = () => {
-  const [productInfo, setProductInfo] = useState<IProductCreate>({
+  const [productInfo, setProductInfo] = useState<IProductCreateRequestBody>({
     name: "",
     active: true,
     description: "",
     images: [],
-    price: 0,
+    priceInDollars: 0,
     unit_label: "",
     category: undefined,
     inventory: undefined,
   });
 
   const handleSubmit =
-    (props: IProductCreate): React.FormEventHandler<HTMLFormElement> =>
+    (
+      props: IProductCreateRequestBody
+    ): React.FormEventHandler<HTMLFormElement> =>
     (event) => {
       event?.preventDefault();
 
@@ -82,11 +84,13 @@ const CreateProduct: React.FC<CreateProductProps> = () => {
         required
         label="Price"
         type="number"
-        value={productInfo.price}
+        value={productInfo.priceInDollars}
         onChange={(event) => {
           setProductInfo({
             ...productInfo,
-            price: event.target?.value ? parseFloat(event.target?.value) : 0,
+            priceInDollars: event.target?.value
+              ? parseFloat(event.target?.value)
+              : 0,
           });
         }}
       />

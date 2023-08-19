@@ -1,41 +1,124 @@
-import { getStripe } from "~/utils/stripe";
+import {
+  PrismaClientInitializationError,
+  PrismaClientKnownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientUnknownRequestError,
+  PrismaClientValidationError,
+} from "@prisma/client/runtime/library";
 import { NextApiHandler } from "next";
 import Stripe from "stripe";
-import type { IProductCreate } from "~/types/product.types";
+import { IProductCreateRequestBody } from "~/types/product.types";
+import prisma from "~/utils/prisma";
+import { getStripe } from "~/utils/stripe";
 
 const stripe = getStripe();
 
-const sessions: NextApiHandler = async (req, res) => {
+const createHandler: NextApiHandler = async (req, res) => {
   if (req.method !== "POST") res.status(405).end();
 
-  const productValues: IProductCreate = req.body;
+  [
+    "active",
+    "priceInDollars",
+    "unit_label",
+    "inventory",
+    "createdBy",
+    "title",
+    "set",
+    "cardNum",
+    "rarity",
+    "imgs",
+    "description",
+    "attribute",
+  ].forEach((key) => {
+    if (!Object.keys(req.body).includes(key)) {
+      const msg = `Missing key ${key} in request body`;
+      res.status(400).send(msg);
+      throw new Error(msg);
+    }
+  });
+
+  const productValues: IProductCreateRequestBody = req.body;
 
   try {
     const product = await stripe.products.create({
-      name: productValues.name,
+      name: productValues.title,
       active: productValues.active,
       description: productValues.description,
-      images: productValues.images,
-      shippable: false,
+      images: productValues.imgs.map((img) => img.url),
+      shippable: true,
       default_price_data: {
         currency: "AUD",
-        unit_amount: productValues.price * 100,
+        unit_amount: productValues.priceInDollars * 100,
       },
       unit_label: productValues.unit_label,
       metadata: {
-        category: productValues.category || null,
-        inventory: productValues.inventory || null,
+        cardNum: productValues.cardNum,
+        inventory: productValues.inventory,
       },
     });
 
-    res.status(200).json(product);
+    const priceId =
+      typeof product.default_price === "string"
+        ? product.default_price
+        : product.default_price!.id;
+
+    if (typeof priceId !== "string")
+      throw new Error(
+        `Successfully created stripe product but without price Id: `,
+        {
+          cause: product,
+        }
+      );
+
+    const prismaCard = await prisma.cardProduct.create({
+      data: {
+        productId: product.id,
+        priceId:
+          typeof product.default_price === "string"
+            ? product.default_price
+            : product.default_price!.id,
+        createdBy: productValues.createdBy,
+
+        title: productValues.title,
+        cardNum: productValues.cardNum,
+        set: productValues.set,
+        rarity: productValues.rarity.toString(),
+        imgs: {
+          createMany: {
+            data: productValues.imgs,
+          },
+        },
+        description: productValues.description,
+        attribute: productValues.attribute.toString(),
+
+        level: productValues.level,
+        attackValue: productValues.attackValue,
+        defenseValue: productValues.defenseValue,
+        monsterType: productValues.monsterType?.toString(),
+        subclass: productValues.subclass?.toString(),
+        hasEffect: productValues.hasEffect,
+        linkRating: productValues.linkRating,
+        linkArrows: productValues.linkArrows?.join(","),
+      },
+      include: { imgs: true },
+    });
+
+    res.status(200).json({ product, prisma: prismaCard });
   } catch (error) {
     if (error instanceof Stripe.errors.StripeError) {
       res.status(500).json(error.code);
+    } else if (
+      error instanceof PrismaClientInitializationError ||
+      error instanceof PrismaClientKnownRequestError ||
+      error instanceof PrismaClientUnknownRequestError ||
+      error instanceof PrismaClientValidationError ||
+      error instanceof PrismaClientRustPanicError
+    ) {
+      res.status(500).json({ message: error.message });
     } else {
       res.status(500).end();
     }
   }
 };
 
-export default sessions;
+export default createHandler;
