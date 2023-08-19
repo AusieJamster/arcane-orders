@@ -1,14 +1,14 @@
 import { Box, Button, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
-import { IProduct } from "~/types/product.types";
+import { IProduct } from "@src/types/product.types";
 import Image from "next/image";
 import Stripe from "stripe";
 import axios from "axios";
-import { loadMyStripe } from "~/utils/stripe";
+import { loadMyStripe } from "@src/utils/stripe";
 import { AddToCartBtn } from "../AddToCartBtn";
 import ConditionalWrapper from "../ConditionalWrapper";
 import { ArcaneLink } from "../ArcaneLink";
-import { numberToCurrency } from "~/utils/product";
+import { numberToCurrency } from "@src/utils/product";
 
 interface IProductOverviewProps {
   product: IProduct;

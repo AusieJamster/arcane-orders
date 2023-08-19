@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import { Box } from "@mui/material";
 import Header from "./Header";
 import Footer from "./Footer";
-import { PageLinks } from "~/types/layout.types";
+import { PageLinks } from "@src/types/layout.types";
 
 export interface ILayoutProps {
   children: React.ReactNode;

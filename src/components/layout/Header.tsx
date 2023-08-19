@@ -1,9 +1,9 @@
 import { AppBar, Container, Toolbar, Tooltip, IconButton } from "@mui/material";
 import Link from "next/link";
 import React from "react";
-import { PageLinks } from "~/types/layout.types";
-import DesktopMenu from "./Desktop";
-import MobileMenu from "./MobileMenu";
+import { PageLinks } from "@src/types/layout.types";
+import DesktopMenu from "./Desktop/Desktop";
+import MobileMenu from "./Mobile/MobileMenu";
 import TitleComponent from "./TitleComponent";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ brands }) => {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-  }; 
+  };
 
   return (
     <AppBar position="fixed">

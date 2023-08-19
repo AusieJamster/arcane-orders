@@ -1,4 +1,4 @@
-import { IProduct } from "~/types/product.types";
+import { IProduct } from "@src/types/product.types";
 import path from "path";
 import { promises as fs } from "fs";
 

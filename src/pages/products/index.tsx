@@ -1,8 +1,8 @@
 import React from "react";
 import type { GetServerSideProps, NextPage } from "next";
-import ProductTile from "~/components/product-overview/ProductOverview";
-import { getAllActiveProducts } from "~/utils/product";
-import { IProduct } from "~/types/product.types";
+import ProductTile from "@src/components/product-overview/ProductOverview";
+import { getAllActiveProducts } from "@src/utils/product";
+import { IProduct } from "@src/types/product.types";
 import { Stack, useMediaQuery, useTheme } from "@mui/material";
 
 interface ResultsPageProps {

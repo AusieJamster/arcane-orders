@@ -10,8 +10,8 @@ import {
 import { NextPage } from "next";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import CartTile from "~/components/cart/CartTile";
-import store from "~/redux/store";
+import CartTile from "@src/components/cart/CartTile";
+import store from "@src/redux/store";
 import { adjustQuantity, removeFromCart } from "src/redux/cart.slice";
 
 interface CartPageProps {}

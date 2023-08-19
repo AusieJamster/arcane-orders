@@ -1,6 +1,6 @@
 import { Box, Grid, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
-import { PageLinks } from "~/types/layout.types";
+import { PageLinks } from "@src/types/layout.types";
 import FooterList from "./FooterList";
 
 interface FooterProps {
@@ -23,7 +23,7 @@ const Footer: React.FC<FooterProps> = ({ brands }) => {
     >
       <Grid container>
         <Grid item xs={12} md={6}>
-          <FooterList  links={brands} />
+          <FooterList links={brands} />
         </Grid>
       </Grid>
     </Box>

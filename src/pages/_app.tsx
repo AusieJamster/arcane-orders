@@ -6,10 +6,8 @@ import Head from "next/head";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { Provider } from "react-redux";
 import store from "src/redux/store";
-import Layout from "~/components/layout/Layout";
-import Header from "~/components/layout/Header";
-import Footer from "~/components/layout/Footer";
-import { PageLinks } from "~/types/layout.types";
+import Layout from "@src/components/layout/Layout";
+import { PageLinks } from "@src/types/layout.types";
 import { ClerkProvider } from "@clerk/nextjs";
 
 interface IMyAppProps extends AppProps {

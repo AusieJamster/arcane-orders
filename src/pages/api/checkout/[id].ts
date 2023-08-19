@@ -1,6 +1,6 @@
 import { NextApiHandler } from "next";
 import Stripe from "stripe";
-import { getStripe } from "~/utils/stripe";
+import { getStripe } from "@src/utils/stripe";
 
 const stripe = getStripe();
 

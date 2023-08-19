@@ -1,5 +1,45 @@
 import Stripe from "stripe";
+import { z } from "zod";
 
+export enum ECardLinkArrows {
+  BOTTOM_Right = "Bottom-Right",
+  BOTTOM = "Bottom",
+  BOTTOM_Left = "Bottom-Left",
+}
+
+export enum EMonsterType {
+  NORMAL = "Normal",
+  LINK = "Link",
+  XYZ = "Xyz",
+}
+
+export enum ECardSet {
+  SOULBURNING_VOLCANO = "Legendary Duelists: Soulburning Volcano",
+}
+
+export enum ECardType {
+  CYBERSE = "Cyberse",
+  PYRO = "Pyro",
+  WARRIOR = "Warrior",
+
+  NORMAL = "Normal",
+  CONTINUOUS = "Continuous",
+  QUICK_PLAY_SPELL = "Quick Play Spell",
+}
+
+export enum ECardAttribute {
+  FIRE = "FIRE",
+  SPELL = "SPELL",
+  TRAP = "TRAP",
+}
+
+export enum ECardRarity {
+  GHOST_RARE = "Ghost Rare",
+  SUPER_RARE = "Super Rare",
+  ULTRA_RARE = "Ultra Rare",
+  RARE = "Rare",
+  COMMON = "Common",
+}
 export interface ICart {
   name?: string;
   tableNumber?: string;
@@ -11,6 +51,42 @@ export interface IProductWithQuantity extends IProduct {
   quantity: number;
 }
 
+const imageInfoSchema = z.object({
+  isPrimary: z.boolean(),
+  url: z.string().url(),
+  alt: z.string(),
+});
+
+const cardProductBaseSchema = z.object({
+  title: z.string().min(1),
+  set: z.nativeEnum(ECardSet),
+  cardNum: z.string().min(1),
+  rarity: z.nativeEnum(ECardRarity),
+  imgs: imageInfoSchema.array(),
+  description: z.string(),
+  attribute: z.nativeEnum(ECardAttribute),
+  subclass: z.nativeEnum(ECardType),
+});
+
+export type TCardProductBase = z.infer<typeof cardProductBaseSchema>;
+
+const cardMonsterProductBaseSchema = z.object({
+  level: z.number().positive(),
+  attackValue: z.number(),
+  defenseValue: z.number(),
+  monsterType: z.nativeEnum(EMonsterType),
+  hasEffect: z.boolean(),
+
+  linkRating: z.number().positive().optional(),
+  linkArrows: z.nativeEnum(ECardLinkArrows).array().optional(),
+});
+
+export type TCardMonsterProductBase = z.infer<
+  typeof cardMonsterProductBaseSchema
+>;
+
+export type TCardMonsterProduct = TCardMonsterProductBase & TCardProductBase;
+
 export interface IProduct extends Omit<Stripe.Product, "metadata"> {
   metadata: {
     inventory: number;
@@ -18,78 +94,36 @@ export interface IProduct extends Omit<Stripe.Product, "metadata"> {
   };
 }
 
-export interface IProductCreateRequestBody
-  extends ICardProductBase,
-    Partial<ICardMonsterProductBase> {
-  active: boolean;
-  priceInDollars: number;
-  unit_label: string;
-  inventory: number;
-}
+const productCreateBaseSchema = z.object({
+  active: z.boolean(),
+  priceInDollars: z.number().positive(),
+  unit_label: z.string().min(1),
+  inventory: z.number().positive(),
+});
 
-interface IImageInfo {
-  isPrimary: boolean;
-  url: string;
-  alt: string;
-}
+export const productCreateFormSchema = cardProductBaseSchema.merge(
+  productCreateBaseSchema
+);
 
-interface ICardProductBase {
-  productId: string;
-  priceId: string;
-  createdBy: string;
+export type TProductCreateFormSchema = z.infer<typeof productCreateFormSchema>;
 
-  title: string;
-  set: string;
-  cardNum: string;
-  rarity: TCardRarity;
-  imgs: IImageInfo[];
-  description: string;
-  attribute: TCardAttribute; // !== SPELL || TRAP === MONSTER
-}
+export const productCreateMonsterFormSchema = cardProductBaseSchema
+  .merge(cardMonsterProductBaseSchema)
+  .merge(productCreateBaseSchema);
 
-interface ICardMonsterProductBase {
-  level: number;
-  attackValue: number;
-  defenseValue: number;
-  monsterType: TMonsterType;
-  subclass: TCardType;
-  hasEffect: boolean;
+export type TProductCreateMonsterFormSchema = z.infer<
+  typeof productCreateMonsterFormSchema
+>;
 
-  linkRating: number;
-  linkArrows: TCardLinkArrows[];
-}
+export const productCreateRequestBodySchema = productCreateFormSchema
+  .or(productCreateMonsterFormSchema)
+  .and(
+    z.object({
+      productId: z.string(),
+      priceId: z.string(),
+    })
+  );
 
-export interface ICardMonsterProduct
-  extends ICardMonsterProductBase,
-    ICardProductBase {}
-
-enum TCardLinkArrows {
-  "Bottom-Right",
-  "Bottom",
-  "Bottom-Left",
-}
-enum TMonsterType {
-  "Link",
-  "Xyz",
-}
-enum TCardType {
-  "Cyberse",
-  "Pyro",
-  "Warrior",
-
-  "Normal",
-  "Continuous",
-  "Quick Play Spell",
-}
-enum TCardAttribute {
-  "FIRE",
-  "SPELL",
-  "TRAP",
-}
-enum TCardRarity {
-  "Ghost Rare",
-  "Super Rare",
-  "Ultra Rare",
-  "Rare",
-  "Common",
-}
+export type TProductCreateRequestBody = z.infer<
+  typeof productCreateRequestBodySchema
+>;

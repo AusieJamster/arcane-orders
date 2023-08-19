@@ -7,9 +7,10 @@ import {
 } from "@prisma/client/runtime/library";
 import { NextApiHandler } from "next";
 import Stripe from "stripe";
-import { IProductCreateRequestBody } from "~/types/product.types";
-import prisma from "~/utils/prisma";
-import { getStripe } from "~/utils/stripe";
+import prisma from "@src/utils/prisma";
+import { getStripe } from "@src/utils/stripe";
+import { getAuth } from "@clerk/nextjs/server";
+import type { TProductCreateRequestBody } from "@src/types/product.types";
 
 const stripe = getStripe();
 
@@ -21,7 +22,6 @@ const createHandler: NextApiHandler = async (req, res) => {
     "priceInDollars",
     "unit_label",
     "inventory",
-    "createdBy",
     "title",
     "set",
     "cardNum",
@@ -37,7 +37,13 @@ const createHandler: NextApiHandler = async (req, res) => {
     }
   });
 
-  const productValues: IProductCreateRequestBody = req.body;
+  const userId = getAuth(req).userId;
+  if (!userId) {
+    res.status(401).end();
+    throw new Error("no userId");
+  }
+
+  const productValues: TProductCreateRequestBody = req.body;
 
   try {
     const product = await stripe.products.create({
@@ -50,7 +56,7 @@ const createHandler: NextApiHandler = async (req, res) => {
         currency: "AUD",
         unit_amount: productValues.priceInDollars * 100,
       },
-      unit_label: productValues.unit_label,
+      unit_label: productValues.unit_label.toLowerCase(),
       metadata: {
         cardNum: productValues.cardNum,
         inventory: productValues.inventory,
@@ -77,7 +83,7 @@ const createHandler: NextApiHandler = async (req, res) => {
           typeof product.default_price === "string"
             ? product.default_price
             : product.default_price!.id,
-        createdBy: productValues.createdBy,
+        createdBy: userId,
 
         title: productValues.title,
         cardNum: productValues.cardNum,

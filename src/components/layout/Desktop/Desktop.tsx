@@ -1,6 +1,6 @@
-import { Box, Stack } from "@mui/material";
-import { PageLinks } from "~/types/layout.types";
-import { ArcaneLink } from "../ArcaneLink";
+import { Box, Button, Stack } from "@mui/material";
+import { PageLinks } from "@src/types/layout.types";
+import { ArcaneLink } from "../../ArcaneLink";
 import {
   SignInButton,
   SignUpButton,
@@ -8,7 +8,6 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
-import { ArcaneButton } from "../common/ArcaneButton";
 
 interface IDesktopMenuProps {
   pages: PageLinks[];
@@ -30,12 +29,13 @@ const DesktopMenu: React.FC<IDesktopMenuProps> = ({
     <Stack direction="row">
       {pages.map((page) => (
         <ArcaneLink href={page.link} key={page.name}>
-          <ArcaneButton
+          <Button
+            sx={{ color: "white", mx: 2 }}
             aria-label={`link to ${page.name}`}
             onClick={handleCloseNavMenu}
           >
             {page.name}
-          </ArcaneButton>
+          </Button>
         </ArcaneLink>
       ))}
     </Stack>
@@ -45,10 +45,10 @@ const DesktopMenu: React.FC<IDesktopMenuProps> = ({
       </SignedIn>
       <SignedOut>
         <SignUpButton>
-          <ArcaneButton>Sign Up</ArcaneButton>
+          <Button sx={{ color: "white", mx: 2 }}>Sign Up</Button>
         </SignUpButton>
         <SignInButton>
-          <ArcaneButton>Sign In</ArcaneButton>
+          <Button sx={{ color: "white", mx: 2 }}>Sign In</Button>
         </SignInButton>
       </SignedOut>
     </Stack>

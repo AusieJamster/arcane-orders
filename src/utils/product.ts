@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { getStripe } from "./stripe";
-import { IProduct, IProductCreateRequestBody } from "~/types/product.types";
+import { IProduct, IProductCreateRequestBody } from "@src/types/product.types";
 import axios from "axios";
 
 export const searchProduct = async (query: string, limit?: number) => {

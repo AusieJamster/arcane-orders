@@ -1,4 +1,4 @@
-import { getStripe } from "~/utils/stripe";
+import { getStripe } from "@src/utils/stripe";
 import { NextApiHandler } from "next";
 import Stripe from "stripe";
 

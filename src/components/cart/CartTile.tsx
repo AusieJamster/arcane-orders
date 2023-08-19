@@ -1,9 +1,9 @@
 import { Box, Grid, Paper, Stack, TextField, Typography } from "@mui/material";
 import React, { useMemo, useState } from "react";
-import { IProduct } from "~/types/product.types";
+import { IProduct } from "@src/types/product.types";
 import { ArcaneLink } from "../ArcaneLink";
 import Image from "next/image";
-import { numberToCurrency } from "~/utils/product";
+import { numberToCurrency } from "@src/utils/product";
 
 interface CartTileProps {
   product: IProduct;
