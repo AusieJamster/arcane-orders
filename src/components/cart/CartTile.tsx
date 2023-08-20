@@ -1,12 +1,12 @@
 import { Box, Grid, Paper, Stack, TextField, Typography } from "@mui/material";
 import React, { useMemo, useState } from "react";
-import { IProduct } from "@src/types/product.types";
+import { IStripeProduct } from "@src/types/product.types";
 import { ArcaneLink } from "../ArcaneLink";
 import Image from "next/image";
 import { numberToCurrency } from "@src/utils/product";
 
 interface CartTileProps {
-  product: IProduct;
+  product: IStripeProduct;
   quantity: number;
   onQuantityChangeEvent: (quantity: number) => void;
   error: string | null;

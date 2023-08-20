@@ -1,6 +1,6 @@
 import { Box, Button, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
-import { IProduct } from "@src/types/product.types";
+import { IStripeProduct } from "@src/types/product.types";
 import Image from "next/image";
 import Stripe from "stripe";
 import axios from "axios";
@@ -11,7 +11,7 @@ import { ArcaneLink } from "../ArcaneLink";
 import { numberToCurrency } from "@src/utils/product";
 
 interface IProductOverviewProps {
-  product: IProduct;
+  product: IStripeProduct;
   imgHeight?: number;
   linkToProduct?: boolean;
   isMobile: boolean;

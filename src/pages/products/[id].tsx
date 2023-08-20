@@ -2,11 +2,11 @@ import React from "react";
 import type { GetServerSideProps, NextPage } from "next";
 import ProductTile from "@src/components/product-overview/ProductOverview";
 import { getProduct } from "@src/utils/product";
-import { IProduct } from "@src/types/product.types";
+import { IStripeProduct } from "@src/types/product.types";
 import { useMediaQuery, useTheme } from "@mui/material";
 
 interface ProductPageProps {
-  product: IProduct;
+  product: IStripeProduct;
 }
 
 const Product: NextPage<ProductPageProps> = ({ product }) => {

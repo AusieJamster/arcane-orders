@@ -1,6 +1,9 @@
 import Stripe from "stripe";
 import { getStripe } from "./stripe";
-import { IProduct, IProductCreateRequestBody } from "@src/types/product.types";
+import {
+  IStripeProduct,
+  IProductCreateRequestBody,
+} from "@src/types/product.types";
 import axios from "axios";
 
 export const searchProduct = async (query: string, limit?: number) => {
@@ -18,7 +21,7 @@ export const getProduct = async (id: string) =>
 
 export const getAllActiveProducts = async () => {
   let hasMore = true;
-  const productList: IProduct[] = [];
+  const productList: IStripeProduct[] = [];
   while (hasMore) {
     const list = await getStripe().products.list({
       starting_after: productList?.[productList.length - 1]?.id,

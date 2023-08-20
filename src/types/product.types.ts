@@ -47,17 +47,22 @@ export interface ICart {
   products: IProductWithQuantity[];
 }
 
-export interface IProductWithQuantity extends IProduct {
+export interface IProductWithQuantity extends IStripeProduct {
   quantity: number;
+}
+
+export interface TPostUploadImageFile {
+  key: string;
+  url: string;
 }
 
 const imageInfoSchema = z.object({
   isPrimary: z.boolean(),
   url: z.string().url(),
-  alt: z.string(),
+  alt: z.string().optional(),
 });
 
-const cardProductBaseSchema = z.object({
+export const cardProductBaseSchema = z.object({
   title: z.string().min(1),
   set: z.nativeEnum(ECardSet),
   cardNum: z.string().min(1),
@@ -68,9 +73,7 @@ const cardProductBaseSchema = z.object({
   subclass: z.nativeEnum(ECardType),
 });
 
-export type TCardProductBase = z.infer<typeof cardProductBaseSchema>;
-
-const cardMonsterProductBaseSchema = z.object({
+export const cardMonsterProductBaseSchema = z.object({
   level: z.number().positive(),
   attackValue: z.number(),
   defenseValue: z.number(),
@@ -81,49 +84,39 @@ const cardMonsterProductBaseSchema = z.object({
   linkArrows: z.nativeEnum(ECardLinkArrows).array().optional(),
 });
 
-export type TCardMonsterProductBase = z.infer<
-  typeof cardMonsterProductBaseSchema
->;
-
-export type TCardMonsterProduct = TCardMonsterProductBase & TCardProductBase;
-
-export interface IProduct extends Omit<Stripe.Product, "metadata"> {
+export interface IStripeProduct extends Omit<Stripe.Product, "metadata"> {
   metadata: {
     inventory: number;
     cardNum: string;
   };
 }
 
-const productCreateBaseSchema = z.object({
+export const productFormSchema = z.object({
   active: z.boolean(),
   priceInDollars: z.number().positive(),
   unit_label: z.string().min(1),
   inventory: z.number().positive(),
 });
 
-export const productCreateFormSchema = cardProductBaseSchema.merge(
-  productCreateBaseSchema
+const productSchema = productFormSchema.merge(
+  z.object({
+    productId: z.string(),
+    priceId: z.string(),
+  })
 );
 
-export type TProductCreateFormSchema = z.infer<typeof productCreateFormSchema>;
+export const productCreateCardFormSchema =
+  cardProductBaseSchema.merge(productFormSchema);
 
 export const productCreateMonsterFormSchema = cardProductBaseSchema
   .merge(cardMonsterProductBaseSchema)
-  .merge(productCreateBaseSchema);
+  .merge(productFormSchema);
 
-export type TProductCreateMonsterFormSchema = z.infer<
-  typeof productCreateMonsterFormSchema
->;
-
-export const productCreateRequestBodySchema = productCreateFormSchema
-  .or(productCreateMonsterFormSchema)
-  .and(
+export const productCreateRequestBodySchema = cardProductBaseSchema
+  .merge(cardMonsterProductBaseSchema.deepPartial())
+  .merge(productFormSchema)
+  .merge(
     z.object({
-      productId: z.string(),
-      priceId: z.string(),
+      isMonster: z.boolean(),
     })
   );
-
-export type TProductCreateRequestBody = z.infer<
-  typeof productCreateRequestBodySchema
->;

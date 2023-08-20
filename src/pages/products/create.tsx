@@ -24,43 +24,44 @@ import {
   ECardSet,
   ECardType,
   EMonsterType,
-  cardLinkMonsterProductBaseSchema,
-  productCreateFormSchema,
-  productCreateLinkMonsterFormSchema,
+  TPostUploadImageFile,
+  productCreateCardFormSchema,
   productCreateMonsterFormSchema,
 } from "@src/types/product.types";
 import FileUploadField from "@src/components/formComponents/FileUploadField/FileUploadField";
-import { parse } from "path";
+import axios from "axios";
 
 interface CreateProductProps {}
 
 const CreateProduct: React.FC<CreateProductProps> = ({}) => {
   const [isMonster, setIsMonster] = useState<boolean>(false);
-  const [isLinkMonster, setIsLinkMonster] = useState<boolean>(false);
 
-  const [images, setImages] = useState<File[]>([]);
+  const [images, setImages] = useState<TPostUploadImageFile[]>([]);
   const [imageErrors, setImageErrors] = useState<string | null>(null);
   const [primaryIdx, setPrimaryIdx] = useState<string>("0");
   const [imageAltText, setImageAltText] = useState<string[]>([]);
 
   const handleRemoveImage = (index: number) => {
-    setImages((prev) => {
-      prev.splice(index, 1);
-      return [...prev];
-    });
-
-    setImageErrors(null);
+    axios
+      .delete(`/api/deleteImages`, {
+        data: [images[index].key],
+      })
+      .then(() => {
+        setImageErrors(null);
+        setImages((prev) => {
+          prev.splice(index, 1);
+          return [...prev];
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        setImageErrors("Error removing image");
+      });
   };
 
-  const handleFileChange = (files: File[]) => {
+  const handleFileChange = (files: TPostUploadImageFile[]) => {
     if (files.length < 1) {
       setImages([]);
-      return;
-    }
-
-    const oversizedFile = files.find((file) => file.size > 1000000);
-    if (oversizedFile) {
-      setImageErrors(`File ${oversizedFile.name} is greater than 1 MB`);
       return;
     }
 
@@ -70,7 +71,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
     }
 
     const fileMap = new Map();
-    [...images, ...files].forEach((file) => fileMap.set(file.name, file));
+    [...images, ...files].forEach((file) => fileMap.set(file.key, file));
 
     setImageErrors(null);
     setImages(Array.from(fileMap.values()).slice(0, 8));
@@ -84,11 +85,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(
-      isLinkMonster && isMonster
-        ? cardLinkMonsterProductBaseSchema
-        : isMonster
-        ? productCreateMonsterFormSchema
-        : productCreateFormSchema
+      isMonster ? productCreateMonsterFormSchema : productCreateCardFormSchema
     ),
     defaultValues: {
       active: true,
@@ -108,7 +105,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
       level: undefined,
       attackValue: undefined,
       defenseValue: undefined,
-      monsterType: undefined,
+      monsterType: EMonsterType.NORMAL,
       hasEffect: undefined,
       linkRating: undefined,
       linkArrows: undefined,
@@ -123,12 +120,9 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
   };
 
   const onSubmit = (data: any) => {
-    const validator =
-      data?.monsterType === EMonsterType.LINK
-        ? productCreateLinkMonsterFormSchema
-        : isMonster
-        ? productCreateMonsterFormSchema
-        : productCreateFormSchema;
+    const validator = isMonster
+      ? productCreateMonsterFormSchema
+      : productCreateCardFormSchema;
 
     const cardData = validator.safeParse(data);
 
@@ -142,14 +136,22 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
     // TODO: upload these images to the server
     console.log(images);
 
-    // TODO: add images to the card with alt and isPrimary
     const imgObjs = images.map((img, i) => ({
-      alt: img.name,
-      url: imageAltText[i],
-      isPrimary: img.name === images[parseInt(primaryIdx)].name,
+      alt: imageAltText[i],
+      url: img.url,
+      isPrimary: img.key === images[parseInt(primaryIdx)].key,
     }));
 
     cardData.data.imgs = imgObjs;
+
+    axios
+      .post("/api/products/create", { ...cardData.data, isMonster })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   return (
@@ -220,6 +222,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
         </Grid>
         <Grid item xs={11}>
           <FileUploadField
+            imageErrorsUpdate={setImageErrors}
             primaryIdx={primaryIdx}
             primaryIdxUpdate={setPrimaryIdx}
             imageUpdate={handleFileChange}
@@ -378,7 +381,6 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
                 label={"Monster Type"}
                 options={Object.values(EMonsterType)}
                 errorMessage={errors.monsterType?.message}
-                defaultValue={EMonsterType.NORMAL}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} xl={3}>

@@ -10,32 +10,12 @@ import Stripe from "stripe";
 import prisma from "@src/utils/prisma";
 import { getStripe } from "@src/utils/stripe";
 import { getAuth } from "@clerk/nextjs/server";
-import type { TProductCreateRequestBody } from "@src/types/product.types";
+import { productCreateRequestBodySchema } from "@src/types/product.types";
 
 const stripe = getStripe();
 
 const createHandler: NextApiHandler = async (req, res) => {
   if (req.method !== "POST") res.status(405).end();
-
-  [
-    "active",
-    "priceInDollars",
-    "unit_label",
-    "inventory",
-    "title",
-    "set",
-    "cardNum",
-    "rarity",
-    "imgs",
-    "description",
-    "attribute",
-  ].forEach((key) => {
-    if (!Object.keys(req.body).includes(key)) {
-      const msg = `Missing key ${key} in request body`;
-      res.status(400).send(msg);
-      throw new Error(msg);
-    }
-  });
 
   const userId = getAuth(req).userId;
   if (!userId) {
@@ -43,7 +23,16 @@ const createHandler: NextApiHandler = async (req, res) => {
     throw new Error("no userId");
   }
 
-  const productValues: TProductCreateRequestBody = req.body;
+  const reqBody = productCreateRequestBodySchema.safeParse(req.body);
+
+  if (reqBody.success === false) {
+    res.status(400).json({ message: reqBody.error.message });
+    console.error("\u001b[1;31m message \u001b[0m", reqBody.error.message);
+    return;
+  }
+
+  const productValues = reqBody.data;
+  const isMonster = productValues.isMonster;
 
   try {
     const product = await stripe.products.create({
@@ -91,20 +80,24 @@ const createHandler: NextApiHandler = async (req, res) => {
         rarity: productValues.rarity.toString(),
         imgs: {
           createMany: {
-            data: productValues.imgs,
+            data: productValues.imgs.map((img) => ({
+              isPrimary: img.isPrimary,
+              url: img.url,
+              alt: img.alt ?? null,
+            })),
           },
         },
         description: productValues.description,
         attribute: productValues.attribute.toString(),
 
-        level: productValues.level,
-        attackValue: productValues.attackValue,
-        defenseValue: productValues.defenseValue,
-        monsterType: productValues.monsterType?.toString(),
-        subclass: productValues.subclass?.toString(),
-        hasEffect: productValues.hasEffect,
-        linkRating: productValues.linkRating,
-        linkArrows: productValues.linkArrows?.join(","),
+        level: productValues.level ?? null,
+        attackValue: productValues.attackValue ?? null,
+        defenseValue: productValues.defenseValue ?? null,
+        monsterType: productValues.monsterType?.toString() ?? null,
+        subclass: productValues.subclass?.toString() ?? null,
+        hasEffect: productValues.hasEffect ?? null,
+        linkRating: productValues.linkRating ?? null,
+        linkArrows: productValues.linkArrows?.join(",") ?? null,
       },
       include: { imgs: true },
     });

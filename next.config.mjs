@@ -6,6 +6,7 @@ await import("./src/env.mjs");
 
 /** @type {import("next").NextConfig} */
 const config = {
+  experimental: { esmExternals: false },
   images: {
     domains: ["static.wixstatic.com"],
   },

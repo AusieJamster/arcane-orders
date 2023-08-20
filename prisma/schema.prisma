@@ -14,7 +14,7 @@ datasource db {
 model ImageInfo {
   isPrimary          Boolean
   url                String       @id @unique @db.VarChar(256)
-  alt                String       @db.TinyText
+  alt                String?      @db.TinyText
   CardProduct        CardProduct? @relation(fields: [cardProductCardNum], references: [cardNum])
   cardProductCardNum String?
 
