@@ -92,7 +92,6 @@ const FileUploadField: React.FC<FileUploadFieldProps> = ({
         <UploadButton
           endpoint="products"
           onClientUploadComplete={(res) => {
-            console.log("Files: ", res);
             imageUpdate(
               res?.map((file) => ({ key: file.key, url: file.url })) || []
             );

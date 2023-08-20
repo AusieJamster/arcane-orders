@@ -30,10 +30,13 @@ import {
 } from "@src/types/product.types";
 import FileUploadField from "@src/components/formComponents/FileUploadField/FileUploadField";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 interface CreateProductProps {}
 
 const CreateProduct: React.FC<CreateProductProps> = ({}) => {
+  const router = useRouter();
+
   const [isMonster, setIsMonster] = useState<boolean>(false);
 
   const [images, setImages] = useState<TPostUploadImageFile[]>([]);
@@ -134,23 +137,19 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
     }
 
     // TODO: upload these images to the server
-    console.log(images);
-
     const imgObjs = images.map((img, i) => ({
       alt: imageAltText[i],
       url: img.url,
       isPrimary: img.key === images[parseInt(primaryIdx)].key,
     }));
 
-    cardData.data.imgs = imgObjs;
-
     axios
-      .post("/api/products/create", { ...cardData.data, isMonster })
+      .put("/api/products/create", { ...cardData.data, imgs: imgObjs })
       .then((res) => {
-        console.log(res);
+        router.push(`/products/${cardData.data.cardNum}`);
       })
       .catch((err) => {
-        console.error(err);
+        console.error(err.response.data);
       });
   };
 

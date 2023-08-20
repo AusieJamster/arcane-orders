@@ -59,7 +59,7 @@ export interface TPostUploadImageFile {
 const imageInfoSchema = z.object({
   isPrimary: z.boolean(),
   url: z.string().url(),
-  alt: z.string().optional(),
+  alt: z.string().optional().nullable(),
 });
 
 export const cardProductBaseSchema = z.object({
@@ -74,14 +74,14 @@ export const cardProductBaseSchema = z.object({
 });
 
 export const cardMonsterProductBaseSchema = z.object({
-  level: z.number().positive(),
-  attackValue: z.number(),
-  defenseValue: z.number(),
-  monsterType: z.nativeEnum(EMonsterType),
-  hasEffect: z.boolean(),
+  level: z.number().positive().nullable(),
+  attackValue: z.number().nullable(),
+  defenseValue: z.number().nullable(),
+  monsterType: z.nativeEnum(EMonsterType).nullable(),
+  hasEffect: z.boolean().nullable(),
 
-  linkRating: z.number().positive().optional(),
-  linkArrows: z.nativeEnum(ECardLinkArrows).array().optional(),
+  linkRating: z.number().positive().optional().nullable(),
+  linkArrows: z.nativeEnum(ECardLinkArrows).array().optional().nullable(),
 });
 
 export interface IStripeProduct extends Omit<Stripe.Product, "metadata"> {
@@ -98,13 +98,6 @@ export const productFormSchema = z.object({
   inventory: z.number().positive(),
 });
 
-const productSchema = productFormSchema.merge(
-  z.object({
-    productId: z.string(),
-    priceId: z.string(),
-  })
-);
-
 export const productCreateCardFormSchema =
   cardProductBaseSchema.merge(productFormSchema);
 
@@ -112,11 +105,8 @@ export const productCreateMonsterFormSchema = cardProductBaseSchema
   .merge(cardMonsterProductBaseSchema)
   .merge(productFormSchema);
 
-export const productCreateRequestBodySchema = cardProductBaseSchema
+export const productSchema = cardProductBaseSchema
   .merge(cardMonsterProductBaseSchema.deepPartial())
-  .merge(productFormSchema)
-  .merge(
-    z.object({
-      isMonster: z.boolean(),
-    })
-  );
+  .merge(productFormSchema);
+
+export type TProduct = z.infer<typeof productSchema>;

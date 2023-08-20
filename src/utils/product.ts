@@ -1,60 +1,70 @@
-import Stripe from "stripe";
-import { getStripe } from "./stripe";
 import {
-  IStripeProduct,
-  IProductCreateRequestBody,
+  ECardAttribute,
+  ECardLinkArrows,
+  ECardRarity,
+  ECardSet,
+  ECardType,
+  EMonsterType,
+  TProduct,
+  productSchema,
 } from "@src/types/product.types";
-import axios from "axios";
+import prisma from "./prisma";
+import { getStripe } from "./stripe";
 
-export const searchProduct = async (query: string, limit?: number) => {
-  return await getStripe().products.search({
-    query: `active:\'true\' AND name:'${query}`,
-    expand: ["data.default_price"],
-    limit,
+export const getProduct = async (
+  id: string,
+  withPricing: boolean
+): Promise<TProduct | null> => {
+  const prismaCard = await prisma.cardProduct.findUnique({
+    where: { cardNum: id },
+    include: {
+      imgs: true,
+    },
   });
-};
+  if (!prismaCard) return null;
 
-export const getProduct = async (id: string) =>
-  await getStripe().products.retrieve(id, {
-    expand: ["default_price"],
-  });
+  if (withPricing) {
+    if (!prismaCard.priceId) throw new Error("No price id found for product");
 
-export const getAllActiveProducts = async () => {
-  let hasMore = true;
-  const productList: IStripeProduct[] = [];
-  while (hasMore) {
-    const list = await getStripe().products.list({
-      starting_after: productList?.[productList.length - 1]?.id,
-      expand: ["data.default_price"],
-    });
+    const stripe = getStripe();
+    const stripeProduct = await stripe.products.retrieve(prismaCard.productId);
+    const stripePricing = await stripe.prices.retrieve(prismaCard.priceId);
 
-    const filteredMappedProducts = list.data
-      .filter((p) => p.active)
-      .map((product) => ({
-        ...product,
-        metadata: {
-          category: product.metadata.category || null,
-          inventory: !!product.metadata.inventory
-            ? parseInt(product.metadata.inventory)
-            : undefined,
-        },
-        default_price: product.default_price as Stripe.Price,
-      }));
+    if (stripePricing.active === false)
+      throw new Error("Stripe product is not active");
 
-    productList.push(...filteredMappedProducts);
-    hasMore = list.has_more;
+    if (!stripePricing || !stripePricing.unit_amount)
+      throw new Error("No stripe product found for product");
+
+    const card: TProduct = {
+      ...prismaCard,
+      imgs: prismaCard.imgs.map((img) => ({
+        ...img,
+        alt: img.alt ?? null,
+        isPrimary: img.isPrimary,
+      })),
+      active: stripeProduct.active,
+      unit_label: stripeProduct.unit_label ?? "card",
+      inventory: parseInt(stripeProduct.metadata.inventory),
+      priceInDollars: stripePricing.unit_amount / 100,
+
+      set: prismaCard.set as ECardSet,
+      rarity: prismaCard.rarity as ECardRarity,
+      attribute: prismaCard.attribute as ECardAttribute,
+      subclass: prismaCard.subclass as ECardType,
+
+      level: prismaCard.level,
+      attackValue: prismaCard.attackValue,
+      defenseValue: prismaCard.defenseValue,
+      monsterType: prismaCard.monsterType as EMonsterType,
+      hasEffect: prismaCard.hasEffect,
+      linkRating: prismaCard.linkRating,
+      linkArrows:
+        (prismaCard.linkArrows?.split(",") as ECardLinkArrows[]) ?? null,
+    };
+
+    return productSchema.parse(card);
   }
 
-  return productList;
-};
-
-export const createProduct = async (props: IProductCreateRequestBody) =>
-  await axios.post("/api/products/create", props);
-
-export const numberToCurrency = (cost: number) => {
-  const str = cost.toLocaleString("au", {
-    style: "currency",
-    currency: "AUD",
-  });
-  return str[0] !== "A" ? `A${str}` : str;
+  return productSchema.parse(prismaCard);
 };

@@ -10,12 +10,12 @@ import Stripe from "stripe";
 import prisma from "@src/utils/prisma";
 import { getStripe } from "@src/utils/stripe";
 import { getAuth } from "@clerk/nextjs/server";
-import { productCreateRequestBodySchema } from "@src/types/product.types";
+import { productSchema } from "@src/types/product.types";
 
 const stripe = getStripe();
 
 const createHandler: NextApiHandler = async (req, res) => {
-  if (req.method !== "POST") res.status(405).end();
+  if (req.method !== "PUT") res.status(405).end();
 
   const userId = getAuth(req).userId;
   if (!userId) {
@@ -23,18 +23,23 @@ const createHandler: NextApiHandler = async (req, res) => {
     throw new Error("no userId");
   }
 
-  const reqBody = productCreateRequestBodySchema.safeParse(req.body);
+  const reqBody = productSchema.safeParse(req.body);
 
   if (reqBody.success === false) {
     res.status(400).json({ message: reqBody.error.message });
-    console.error("\u001b[1;31m message \u001b[0m", reqBody.error.message);
     return;
   }
 
   const productValues = reqBody.data;
-  const isMonster = productValues.isMonster;
 
   try {
+    const existingProduct = await stripe.products.search({
+      query: `metadata['cardNum']:'${productValues.cardNum}'`,
+    });
+    if (existingProduct.data.length > 0) {
+      res.status(400).end("product with that cardNum already exists");
+      return;
+    }
     const product = await stripe.products.create({
       name: productValues.title,
       active: productValues.active,
@@ -52,17 +57,17 @@ const createHandler: NextApiHandler = async (req, res) => {
       },
     });
 
+    if (!product.default_price)
+      throw new Error("Failed to created stripe product");
+
     const priceId =
       typeof product.default_price === "string"
         ? product.default_price
-        : product.default_price!.id;
+        : product.default_price.id;
 
     if (typeof priceId !== "string")
       throw new Error(
-        `Successfully created stripe product but without price Id: `,
-        {
-          cause: product,
-        }
+        "Successfully created stripe product but without price Id"
       );
 
     const prismaCard = await prisma.cardProduct.create({
