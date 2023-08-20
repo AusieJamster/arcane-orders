@@ -15,7 +15,7 @@ model ImageInfo {
   isPrimary          Boolean
   url                String       @id @unique @db.VarChar(256)
   alt                String?      @db.TinyText
-  CardProduct        CardProduct? @relation(fields: [cardProductCardNum], references: [cardNum])
+  CardProduct        CardProduct? @relation(fields: [cardProductCardNum], references: [productIdentifier])
   cardProductCardNum String?
 
   @@index([cardProductCardNum])
@@ -26,7 +26,11 @@ model CardProduct {
   priceId     String      @unique @db.VarChar(50)
   createdBy   String      @db.TinyText
 
-  cardNum     String      @id @default(cuid())
+  active      Boolean     @default(true)
+  unit_label  String      @db.VarChar(20)
+  inventory   Int         @db.UnsignedTinyInt
+
+  productIdentifier     String      @id @default(cuid())
   createdAt   DateTime    @default(now())
   title       String      @db.VarChar(50)
   set         String      @db.VarChar(50)

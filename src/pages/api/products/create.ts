@@ -34,10 +34,10 @@ const createHandler: NextApiHandler = async (req, res) => {
 
   try {
     const existingProduct = await stripe.products.search({
-      query: `metadata['cardNum']:'${productValues.cardNum}'`,
+      query: `metadata['productIdentifier']:'${productValues.productIdentifier}'`,
     });
     if (existingProduct.data.length > 0) {
-      res.status(400).end("product with that cardNum already exists");
+      res.status(400).end("product with that productIdentifier already exists");
       return;
     }
     const product = await stripe.products.create({
@@ -52,8 +52,7 @@ const createHandler: NextApiHandler = async (req, res) => {
       },
       unit_label: productValues.unit_label.toLowerCase(),
       metadata: {
-        cardNum: productValues.cardNum,
-        inventory: productValues.inventory,
+        productIdentifier: productValues.productIdentifier,
       },
     });
 
@@ -72,6 +71,9 @@ const createHandler: NextApiHandler = async (req, res) => {
 
     const prismaCard = await prisma.cardProduct.create({
       data: {
+        active: productValues.active,
+        inventory: productValues.inventory,
+        unit_label: productValues.unit_label.toLowerCase(),
         productId: product.id,
         priceId:
           typeof product.default_price === "string"
@@ -80,7 +82,7 @@ const createHandler: NextApiHandler = async (req, res) => {
         createdBy: userId,
 
         title: productValues.title,
-        cardNum: productValues.cardNum,
+        productIdentifier: productValues.productIdentifier,
         set: productValues.set,
         rarity: productValues.rarity.toString(),
         imgs: {

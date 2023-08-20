@@ -98,7 +98,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
 
       title: undefined,
       set: undefined,
-      cardNum: undefined,
+      productIdentifier: undefined,
       rarity: undefined,
       imgs: [],
       description: undefined,
@@ -146,7 +146,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
     axios
       .put("/api/products/create", { ...cardData.data, imgs: imgObjs })
       .then((res) => {
-        router.push(`/products/${cardData.data.cardNum}`);
+        router.push(`/products/${cardData.data.productIdentifier}`);
       })
       .catch((err) => {
         console.error(err.response.data);
@@ -268,9 +268,9 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
             fullWidth
             label="Card Number"
             placeholder="LD10-EN001"
-            error={!!errors.cardNum?.message}
-            helperText={errors.cardNum?.message}
-            {...register("cardNum", { required: true })}
+            error={!!errors.productIdentifier?.message}
+            helperText={errors.productIdentifier?.message}
+            {...register("productIdentifier", { required: true })}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4} xl={3}>

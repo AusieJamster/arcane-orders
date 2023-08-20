@@ -1,3 +1,4 @@
+import { CardProduct, ImageInfo } from "@prisma/client";
 import Stripe from "stripe";
 import { z } from "zod";
 
@@ -63,9 +64,7 @@ const imageInfoSchema = z.object({
 });
 
 export const cardProductBaseSchema = z.object({
-  title: z.string().min(1),
   set: z.nativeEnum(ECardSet),
-  cardNum: z.string().min(1),
   rarity: z.nativeEnum(ECardRarity),
   imgs: imageInfoSchema.array(),
   description: z.string(),
@@ -86,9 +85,19 @@ export const cardMonsterProductBaseSchema = z.object({
 
 export interface IStripeProduct extends Omit<Stripe.Product, "metadata"> {
   metadata: {
-    inventory: number;
-    cardNum: string;
+    productIdentifier: string;
   };
+}
+
+export interface IStripeProductWithPricing
+  extends Omit<Stripe.Product, "metadata"> {
+  metadata: {
+    productIdentifier: string;
+  };
+}
+
+export interface PrismaCard extends CardProduct {
+  imgs: ImageInfo[];
 }
 
 export const productFormSchema = z.object({
@@ -96,6 +105,8 @@ export const productFormSchema = z.object({
   priceInDollars: z.number().positive(),
   unit_label: z.string().min(1),
   inventory: z.number().positive(),
+  title: z.string().min(1),
+  productIdentifier: z.string().min(1),
 });
 
 export const productCreateCardFormSchema =
