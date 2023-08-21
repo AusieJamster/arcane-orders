@@ -1,4 +1,11 @@
 import { createTheme } from "@mui/material";
+import { Poppins } from "next/font/google";
+
+const poppins = Poppins({
+  weight: ["200", "400"],
+  style: ["normal"],
+  subsets: ["latin"],
+});
 
 const dark = createTheme({
   palette: {
@@ -22,18 +29,20 @@ const dark = createTheme({
     // divider: grey[200]
   },
   typography: {
-    h1: { fontSize: 30, fontWeight: "lighter" },
-    h2: { fontSize: 28, fontWeight: "lighter" },
-    h3: { fontSize: 26, fontWeight: "lighter" },
-    h4: { fontSize: 24, fontWeight: "lighter" },
-    h5: { fontSize: 22, fontWeight: "lighter" },
-    h6: { fontSize: 20, fontWeight: "lighter" },
-    body1: { fontWeight: "lighter" },
-    body2: { fontWeight: "lighter" },
-    subtitle1: { fontWeight: "lighter" },
-    subtitle2: { fontWeight: "lighter" },
+    h1: { fontSize: 30 },
+    h2: { fontSize: 28 },
+    h3: { fontSize: 26 },
+    h4: { fontSize: 24 },
+    h5: { fontSize: 22 },
+    h6: { fontSize: 20 },
+    body1: {},
+    body2: { fontSize: 12 },
+    subtitle1: {},
+    subtitle2: {},
     caption: {},
     overline: {},
+
+    fontFamily: poppins.style.fontFamily,
   },
 });
 

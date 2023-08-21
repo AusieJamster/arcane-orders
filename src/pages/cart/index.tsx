@@ -13,35 +13,57 @@ import { useDispatch } from "react-redux";
 import CartTile from "@src/components/cart/CartTile";
 import store from "@src/redux/store";
 import { adjustQuantity, removeFromCart } from "src/redux/cart.slice";
+import { ICart } from "@src/types/product.types";
+import { convertNumberToCurrency } from "@src/utils";
 
 interface CartPageProps {}
 
 const CartPage: NextPage<CartPageProps> = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   const dispatch = useDispatch();
 
   const [error, setError] = useState<string[]>([]);
-  const [cart, setCart] = useState(store.getState().cart);
+  const [cart, setCart] = useState<ICart>(store.getState().cart);
+
+  const totalPrice = useMemo(
+    () =>
+      convertNumberToCurrency(
+        cart.products.reduce(
+          (acc, curr) => acc + curr.product.priceInDollars * curr.quantity,
+          0
+        )
+      ),
+    [cart.products]
+  );
 
   const checkoutDisabled = useMemo<boolean>(
     () => error.length > 0 || cart.products.some((q) => q.quantity < 1),
     [cart.products, error.length]
   );
 
-  store.subscribe(() => setCart(store.getState().cart));
+  useEffect(() => {
+    setCart(store.getState().cart);
 
-  const onQuantityChangeEvent = (index: number) => (newQuantity: number) => {
-    const product = cart.products?.[index];
+    const unsubscribe = store.subscribe(() => setCart(store.getState().cart));
 
-    if (!product) throw new Error("can't find product in cart");
+    return unsubscribe;
+  }, []);
 
-    if (newQuantity < 1 && product?.id) {
-      dispatch(removeFromCart(product.id));
-    } else {
-      dispatch(adjustQuantity({ ...product, quantity: newQuantity }));
-    }
+  const onQuantityChangeEvent = (
+    productIdentifier: string,
+    newQuantity: number
+  ) => {
+    dispatch(
+      adjustQuantity({
+        id: productIdentifier,
+        quantity: newQuantity,
+      })
+    );
+  };
+
+  const handleRemoveFromCart = (productIdentifier: string) => {
+    dispatch(removeFromCart(productIdentifier));
   };
 
   const handleCheckoutClick = async () => {};
@@ -50,6 +72,7 @@ const CartPage: NextPage<CartPageProps> = () => {
     <>
       <Box
         sx={(theme) => ({
+          margin: 2,
           padding: isMobile ? 0 : theme.spacing(3),
           backgroundColor: isMobile
             ? undefined
@@ -75,12 +98,18 @@ const CartPage: NextPage<CartPageProps> = () => {
           <Stack>
             <Grid container spacing={1} marginBottom={2}>
               {cart.products.map((product, index) => (
-                <Grid item xs={12} md={6} xl={3} key={product.id}>
+                <Grid
+                  item
+                  xs={12}
+                  md={6}
+                  xl={4}
+                  key={product.product.productIdentifier}
+                  height={200}
+                >
                   <CartTile
-                    product={product}
-                    quantity={product.quantity}
-                    onQuantityChangeEvent={onQuantityChangeEvent(index)}
-                    error={error[index] ?? null}
+                    productInCart={product}
+                    onQuantityChangeEvent={onQuantityChangeEvent}
+                    onRemoveFromCart={handleRemoveFromCart}
                   />
                 </Grid>
               ))}
@@ -88,6 +117,7 @@ const CartPage: NextPage<CartPageProps> = () => {
             <Typography variant="caption" color="error" textAlign="center">
               {error}
             </Typography>
+            <Typography textAlign="end">{`Total - ${totalPrice}`}</Typography>
             <Button
               variant="contained"
               onClick={handleCheckoutClick}
@@ -109,7 +139,9 @@ const CartPage: NextPage<CartPageProps> = () => {
             variant="caption"
             color="GrayText"
             margin="50px"
-            key={product.id}
+            maxWidth="90vw"
+            overflow={"auto"}
+            key={product.product.productIdentifier}
           >
             {JSON.stringify(product, null, 2)}
           </Typography>

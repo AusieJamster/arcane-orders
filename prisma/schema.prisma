@@ -22,23 +22,23 @@ model ImageInfo {
 }
 
 model CardProduct {
-  productId   String      @unique @db.VarChar(50)
-  priceId     String      @unique @db.VarChar(50)
-  createdBy   String      @db.TinyText
+  productId String @unique @db.VarChar(50)
+  priceId   String @unique @db.VarChar(50)
+  createdBy String @db.TinyText
 
-  active      Boolean     @default(true)
-  unit_label  String      @db.VarChar(20)
-  inventory   Int         @db.UnsignedTinyInt
+  active     Boolean @default(true)
+  unit_label String  @db.VarChar(20)
+  inventory  Int     @db.UnsignedTinyInt
 
-  productIdentifier     String      @id @default(cuid())
-  createdAt   DateTime    @default(now())
-  title       String      @db.VarChar(50)
-  set         String      @db.VarChar(50)
-  rarity      String      @db.VarChar(10)
-  imgs        ImageInfo[]
-  description String      @db.VarChar(512)
-  attribute   String      @db.VarChar(10)
-  updatedAt   DateTime    @updatedAt
+  productIdentifier String      @id @default(cuid())
+  createdAt         DateTime    @default(now())
+  title             String      @db.VarChar(50)
+  set               String      @db.VarChar(50)
+  rarity            String      @db.VarChar(10)
+  imgs              ImageInfo[]
+  description       String      @db.VarChar(512)
+  attribute         String      @db.VarChar(10)
+  updatedAt         DateTime    @updatedAt
 
   level        Int?     @db.UnsignedTinyInt
   attackValue  Int?     @db.UnsignedSmallInt

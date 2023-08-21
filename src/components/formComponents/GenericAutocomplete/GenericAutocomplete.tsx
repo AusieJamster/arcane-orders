@@ -6,7 +6,7 @@ import {
   FormHelperText,
 } from "@mui/material";
 import React from "react";
-import { Controller } from "react-hook-form";
+import { Control, Controller, FieldValues } from "react-hook-form";
 
 type RarityFieldAutocompleteProps<T, U extends boolean | undefined> = Omit<
   AutocompleteProps<T, U, false, false>,
@@ -19,7 +19,7 @@ interface GenericAutocompleteProps<T, U extends boolean | undefined>
   fieldKey: string;
   label: string;
   options: T[];
-  control: any;
+  control: Control<FieldValues>;
 }
 
 const GenericAutocomplete = <T, U extends boolean | undefined = false>({

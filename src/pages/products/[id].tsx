@@ -1,6 +1,6 @@
 import React from "react";
 import type { GetServerSideProps, NextPage } from "next";
-import { getProduct } from "@src/utils/product";
+import { getProduct } from "@src/server/product";
 import { TProduct } from "@src/types/product.types";
 
 interface ProductPageProps {
@@ -25,7 +25,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const product = await getProduct(id, true);
-  
 
   return { props: { product } };
 };

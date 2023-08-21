@@ -8,7 +8,7 @@ await import("./src/env.mjs");
 const config = {
   experimental: { esmExternals: false },
   images: {
-    domains: ["static.wixstatic.com"],
+    domains: ["uploadthing.com", "fakeimg.pl"],
   },
   reactStrictMode: true,
 

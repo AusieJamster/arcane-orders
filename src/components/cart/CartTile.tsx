@@ -1,39 +1,52 @@
-import { Box, Grid, Paper, Stack, TextField, Typography } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import { IStripeProduct } from "@src/types/product.types";
-import { ArcaneLink } from "../ArcaneLink";
-import Image from "next/image";
-import { numberToCurrency } from "@src/utils/product";
+import {
+  Box,
+  Paper,
+  Typography,
+  Stack,
+  IconButton,
+  TextField,
+  Button,
+} from "@mui/material";
+import React from "react";
+import { ICart } from "@src/types/product.types";
+import ImageFade from "../ImageFade/ImageFade";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { convertNumberToCurrency } from "@src/utils";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { QuantityChangeButton } from "./QuantityChangeButton";
 
 interface CartTileProps {
-  product: IStripeProduct;
-  quantity: number;
-  onQuantityChangeEvent: (quantity: number) => void;
-  error: string | null;
+  productInCart: ICart["products"][number];
+  onQuantityChangeEvent: (productIdentifier: string, quantity: number) => void;
+  onRemoveFromCart: (productIdentifier: string) => void;
 }
 
 const CartTile: React.FC<CartTileProps> = ({
-  product,
-  quantity,
+  productInCart,
   onQuantityChangeEvent,
-  error,
+  onRemoveFromCart,
 }) => {
-  const onQuantityChange: React.ChangeEventHandler<HTMLInputElement> = (
-    event
-  ) => {
-    onQuantityChangeEvent(parseInt(event.target.value));
+  const { product, quantity } = productInCart;
+
+  const primaryImage = React.useMemo(() => {
+    return product.imgs.find((img) => img.isPrimary);
+  }, [product]);
+
+  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = parseInt(event.target.value);
+    onQuantityChangeEvent(
+      product.productIdentifier,
+      Number.isNaN(newQuantity) ? 1 : Math.min(product.inventory, newQuantity)
+    );
   };
 
-  const totalPrice = useMemo(() => {
-    if (!product.default_price || !product.default_price.unit_amount)
-      return "Error";
-
-    return numberToCurrency(
-      (product.default_price.unit_amount * quantity) / 100
+  const handleQuantityButtonClick = (up: boolean) => () => {
+    onQuantityChangeEvent(
+      product.productIdentifier,
+      Math.min(product.inventory, quantity + (up ? 1 : -1))
     );
-  }, [product.default_price, quantity]);
-
-  const imgHeight = 200;
+  };
 
   return (
     <Paper
@@ -46,49 +59,64 @@ const CartTile: React.FC<CartTileProps> = ({
         padding: 2,
       })}
     >
-      <Grid container justifyContent="space-around" alignItems="center">
-        <Grid item>
-          <Box position="relative" minWidth={150} height={imgHeight}>
-            <Image
-              src={
-                product.images[0] ??
-                `https://images.unsplash.com/photo-1531685250784-7569952593d2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=${imgHeight}&q=80`
-              }
-              style={{ objectFit: "contain" }}
-              alt={product.name}
-              fill={true}
-            />
-          </Box>
-        </Grid>
-        <Grid item>
-          <Stack justifyContent="space-between" spacing={2}>
-            <ArcaneLink href={`/products/${product.id}`}>
-              <Typography>{product.name}</Typography>
-            </ArcaneLink>
-            <TextField
-              error={error !== null}
-              label="Quantity"
-              variant="outlined"
-              defaultValue={quantity}
-              helperText={error}
-              onChange={onQuantityChange}
-              type="number"
-            />
-            {quantity > 1 && (
-              <Typography
-                component="span"
-                sx={(theme) => ({
-                  color: theme.palette.success.main,
-                  fontStyle: "italic",
-                  fontWeight: 700,
-                })}
-              >
-                {totalPrice}
-              </Typography>
-            )}
+      <Stack direction="row" justifyContent="space-between">
+        <Stack direction="row" gap={1}>
+          <ImageFade
+            primaryImage={primaryImage}
+            title={product.title}
+            width={80}
+            height={100}
+          />
+          <Stack direction="column" justifyContent="center">
+            <Typography variant="h6" color="primary">
+              {product.title}
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              {product.set}
+            </Typography>
+            <Stack direction="row" alignItems="end">
+              <TextField
+                onChange={handleQuantityChange}
+                value={quantity}
+                size="small"
+                sx={{ maxWidth: "25%" }}
+              />
+              <Stack direction="column" marginRight={1}>
+                <QuantityChangeButton onClick={handleQuantityButtonClick(true)}>
+                  <ArrowDropUpIcon />
+                </QuantityChangeButton>
+                <QuantityChangeButton
+                  onClick={handleQuantityButtonClick(false)}
+                >
+                  <ArrowDropDownIcon />
+                </QuantityChangeButton>
+              </Stack>
+              <Stack>
+                <Typography
+                  variant="body2"
+                  textAlign="end"
+                  color={
+                    quantity === product.inventory ? "secondary" : "grey.500"
+                  }
+                >{`stock: ${product.inventory}`}</Typography>
+
+                <Typography variant="body1">{` x ${convertNumberToCurrency(
+                  product.priceInDollars
+                )} = ${convertNumberToCurrency(
+                  quantity * product.priceInDollars
+                )}`}</Typography>
+              </Stack>
+            </Stack>
           </Stack>
-        </Grid>
-      </Grid>
+        </Stack>
+        <Stack justifyContent="center" alignItems="center">
+          <IconButton
+            onClick={() => onRemoveFromCart(product.productIdentifier)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Stack>
+      </Stack>
     </Paper>
   );
 };

@@ -7,13 +7,15 @@ import { PageLinks } from "@src/types/layout.types";
 export interface ILayoutProps {
   children: React.ReactNode;
   brand: PageLinks[];
+  className?: string;
 }
 
-const Layout: NextPage<ILayoutProps> = ({ children, brand }) => {
+const Layout: NextPage<ILayoutProps> = ({ children, brand, className }) => {
   return (
-    <>
+    <Box className={className}>
       <Header brands={brand} />
       <Box
+        component="main"
         sx={(theme) => ({
           minHeight: "83vh",
           paddingTop: theme.spacing(8),
@@ -23,7 +25,7 @@ const Layout: NextPage<ILayoutProps> = ({ children, brand }) => {
         {children}
       </Box>
       <Footer brands={brand} />
-    </>
+    </Box>
   );
 };
 

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IProductWithQuantity, ICart } from "@src/types/product.types";
+import { ICart, TProduct } from "@src/types/product.types";
 
 const initialState: ICart = {
   products: [],
@@ -9,42 +9,42 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    loadExistingState: (state, action: PayloadAction<ICart>) => {
-      state = action.payload;
-    },
-    addToCart: (state, action: PayloadAction<IProductWithQuantity>) => {
-      const itemExists = state.products.find(
-        (item) => item.id === action.payload.id
+    addToCart: (state, action: PayloadAction<TProduct>) => {
+      const existingProduct = state.products.find(
+        (item) =>
+          item.product.productIdentifier === action.payload.productIdentifier
       );
-      if (itemExists) {
-        itemExists.quantity++;
-      } else {
-        state.products.push({ ...action.payload, quantity: 1 });
-      }
+      if (existingProduct) existingProduct.quantity++;
+      else state.products.push({ product: action.payload, quantity: 1 });
     },
-    adjustQuantity: (state, action: PayloadAction<IProductWithQuantity>) => {
+    adjustQuantity: (
+      state,
+      action: PayloadAction<{ id: string; quantity: number }>
+    ) => {
+      const index = state.products.findIndex(
+        (item) => item.product.productIdentifier === action.payload.id
+      );
       if (action.payload.quantity < 1) {
-        removeFromCart(action.payload.id);
-        return;
-      }
-
-      const itemExists = state.products.find(
-        (item) => item.id === action.payload.id
-      );
-      if (itemExists) {
-        itemExists.quantity = action.payload.quantity;
+        removeFromCart(state.products[index].product.productIdentifier);
+      } else if (index >= 0) {
+        state.products[index].quantity = action.payload.quantity;
+      } else {
+        console.error("Product you wish to adjust wasn't found in the cart");
       }
     },
     removeFromCart: (state, action: PayloadAction<string>) => {
       const index = state.products.findIndex(
-        (item) => item.id === action.payload
+        (item) => item.product.productIdentifier === action.payload
       );
-      state.products.splice(index, 1);
+      if (index >= 0) {
+        state.products.splice(index, 1);
+      } else {
+        console.error("Product you wish to remove wasn't found in the cart");
+      }
     },
   },
 });
 
 export const cartReducer = cartSlice.reducer;
 
-export const { addToCart, adjustQuantity, removeFromCart, loadExistingState } =
-  cartSlice.actions;
+export const { addToCart, adjustQuantity, removeFromCart } = cartSlice.actions;

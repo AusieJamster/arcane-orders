@@ -3,9 +3,14 @@ import Stripe from "stripe";
 import { z } from "zod";
 
 export enum ECardLinkArrows {
-  BOTTOM_Right = "Bottom-Right",
+  BOTTOM_RIGHT = "Bottom-Right",
   BOTTOM = "Bottom",
-  BOTTOM_Left = "Bottom-Left",
+  BOTTOM_LEFT = "Bottom-Left",
+  LEFT = "Right",
+  RIGHT = "Left",
+  TOP_RIGHT = "Top-Right",
+  TOP = "Top",
+  TOP_LEFT = "Top-Left",
 }
 
 export enum EMonsterType {
@@ -42,14 +47,8 @@ export enum ECardRarity {
   COMMON = "Common",
 }
 export interface ICart {
-  name?: string;
-  tableNumber?: string;
   clerkId?: string;
-  products: IProductWithQuantity[];
-}
-
-export interface IProductWithQuantity extends IStripeProduct {
-  quantity: number;
+  products: { product: TProduct; quantity: number }[];
 }
 
 export interface TPostUploadImageFile {
@@ -62,6 +61,8 @@ const imageInfoSchema = z.object({
   url: z.string().url(),
   alt: z.string().optional().nullable(),
 });
+
+export type TImageInfo = z.infer<typeof imageInfoSchema>;
 
 export const cardProductBaseSchema = z.object({
   set: z.nativeEnum(ECardSet),
@@ -104,7 +105,7 @@ export const productFormSchema = z.object({
   active: z.boolean(),
   priceInDollars: z.number().positive(),
   unit_label: z.string().min(1),
-  inventory: z.number().positive(),
+  inventory: z.number(),
   title: z.string().min(1),
   productIdentifier: z.string().min(1),
 });
