@@ -15,10 +15,14 @@ import store from "@src/redux/store";
 import { adjustQuantity, removeFromCart } from "src/redux/cart.slice";
 import { ICart } from "@src/types/product.types";
 import { convertNumberToCurrency } from "@src/utils";
+import axios from "axios";
+import Stripe from "stripe";
+import { useRouter } from "next/router";
 
 interface CartPageProps {}
 
 const CartPage: NextPage<CartPageProps> = () => {
+  const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
@@ -36,6 +40,13 @@ const CartPage: NextPage<CartPageProps> = () => {
       ),
     [cart.products]
   );
+
+  // useEffect(() => {
+  //   const query = new URLSearchParams(window.location.search);
+  //   if(query.get('canceled')) {
+
+  //   }
+  // }, []);
 
   const checkoutDisabled = useMemo<boolean>(
     () => error.length > 0 || cart.products.some((q) => q.quantity < 1),
@@ -66,7 +77,20 @@ const CartPage: NextPage<CartPageProps> = () => {
     dispatch(removeFromCart(productIdentifier));
   };
 
-  const handleCheckoutClick = async () => {};
+  const handleCheckoutClick = async () => {
+    const price_items: Stripe.Checkout.SessionCreateParams.LineItem[] =
+      cart.products.map((product) => ({
+        price: product.product.priceId,
+        quantity: product.quantity,
+      }));
+
+    axios
+      .post("/api/checkout/session", { cart: price_items })
+      .then((res) => {
+        router.push(res.data);
+      })
+      .catch(console.error);
+  };
 
   return (
     <>

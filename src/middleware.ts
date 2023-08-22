@@ -6,7 +6,13 @@ export default authMiddleware({
       return redirectToSignIn({ returnBackUrl: req.url });
     }
   },
-  publicRoutes: ["/", "/products", "/products/:id", "/api/checkout/session"],
+  publicRoutes: [
+    "/",
+    "/products",
+    "/products/:id",
+    "/api/checkout/session",
+    "/api/checkout/:id",
+  ],
 });
 
 export const config = {

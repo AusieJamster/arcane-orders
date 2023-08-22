@@ -68,6 +68,10 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
       return;
     }
 
+    if (files.length < 1) {
+      setImageErrors("Must have at least 1 image");
+      return;
+    }
     if (files.length + images.length > 8) {
       setImageErrors("Cannot have more than 8 images");
       return;
@@ -129,11 +133,8 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
 
     const cardData = validator.safeParse(data);
 
-    if (cardData.success) {
-      console.log(cardData.data);
-    } else {
-      console.warn(cardData.error);
-      throw new Error("Invalid form data");
+    if (!cardData.success) {
+      throw new Error(cardData.error.message);
     }
 
     // TODO: upload these images to the server

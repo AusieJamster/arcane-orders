@@ -19,9 +19,7 @@ const ImageFade: React.FC<ImageFadeProps> = ({
   const [opacity, setOpacity] = useState(0);
 
   React.useEffect(() => {
-    setTimeout(() => {
-      setOpacity(1);
-    }, 1000);
+    setOpacity(1);
   }, []);
 
   return (
@@ -29,7 +27,7 @@ const ImageFade: React.FC<ImageFadeProps> = ({
       width={width || "100%"}
       height={height || "100%"}
       position="relative"
-      sx={{ opacity, transition: "all 0.5s ease-in-out" }}
+      sx={{ opacity, transition: "all 1s ease-in-out" }}
     >
       <Image
         src={

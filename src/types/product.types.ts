@@ -67,7 +67,7 @@ export type TImageInfo = z.infer<typeof imageInfoSchema>;
 export const cardProductBaseSchema = z.object({
   set: z.nativeEnum(ECardSet),
   rarity: z.nativeEnum(ECardRarity),
-  imgs: imageInfoSchema.array(),
+  imgs: imageInfoSchema.array().min(1).max(8),
   description: z.string(),
   attribute: z.nativeEnum(ECardAttribute),
   subclass: z.nativeEnum(ECardType),
@@ -119,6 +119,13 @@ export const productCreateMonsterFormSchema = cardProductBaseSchema
 
 export const productSchema = cardProductBaseSchema
   .merge(cardMonsterProductBaseSchema.deepPartial())
-  .merge(productFormSchema);
+  .merge(productFormSchema)
+  .merge(
+    z.object({
+      priceId: z.string(),
+      productId: z.string(),
+      createdBy: z.string(),
+    })
+  );
 
 export type TProduct = z.infer<typeof productSchema>;

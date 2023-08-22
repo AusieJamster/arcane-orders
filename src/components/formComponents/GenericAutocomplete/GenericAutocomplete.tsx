@@ -19,7 +19,7 @@ interface GenericAutocompleteProps<T, U extends boolean | undefined>
   fieldKey: string;
   label: string;
   options: T[];
-  control: Control<FieldValues>;
+  control: Control<any>;
 }
 
 const GenericAutocomplete = <T, U extends boolean | undefined = false>({
