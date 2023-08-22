@@ -14,7 +14,7 @@ import CartTile from "@src/components/cart/CartTile";
 import store from "@src/redux/store";
 import { adjustQuantity, removeFromCart } from "src/redux/cart.slice";
 import { ICart } from "@src/types/product.types";
-import { convertNumberToCurrency } from "@src/utils";
+import { convertDollarValueToCurrency } from "@src/utils";
 import axios from "axios";
 import Stripe from "stripe";
 import { useRouter } from "next/router";
@@ -32,7 +32,7 @@ const CartPage: NextPage<CartPageProps> = () => {
 
   const totalPrice = useMemo(
     () =>
-      convertNumberToCurrency(
+      convertDollarValueToCurrency(
         cart.products.reduce(
           (acc, curr) => acc + curr.product.priceInDollars * curr.quantity,
           0
@@ -121,7 +121,7 @@ const CartPage: NextPage<CartPageProps> = () => {
         ) : (
           <Stack>
             <Grid container spacing={1} marginBottom={2}>
-              {cart.products.map((product, index) => (
+              {cart.products.map((product) => (
                 <Grid
                   item
                   xs={12}

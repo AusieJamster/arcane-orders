@@ -16,6 +16,8 @@ import prisma from "../utils/prisma";
 import { getStripe } from "../utils/stripe";
 import { Prisma } from "@prisma/client";
 
+const stripe = getStripe();
+
 const mapToProduct = (card: PrismaCard, pricing: Stripe.Price): TProduct => {
   if (pricing.active === false) throw new Error("Stripe product is not active");
 
@@ -54,9 +56,52 @@ const mapToProduct = (card: PrismaCard, pricing: Stripe.Price): TProduct => {
   };
 };
 
-export const getProduct = async (
-  id: string,
-  withPricing: boolean
+export const getProductsWithPricingByPriceId = async (
+  ids: string[]
+): Promise<TProduct[]> => {
+  const prismaCards = await prisma.cardProduct.findMany({
+    where: { priceId: { in: ids }, active: true },
+    include: { imgs: true },
+  });
+  if (prismaCards.length !== ids.length) {
+    console.error("Failed to retrieve all products");
+  }
+
+  const pricingPromises = await Promise.allSettled(
+    prismaCards.map((card) => stripe.prices.retrieve(card.priceId))
+  );
+
+  const pricingFulfilledList = pricingPromises.filter((promise) => {
+    if (promise.status === "rejected") console.error(promise.reason);
+    return promise.status !== "rejected";
+  }) as PromiseFulfilledResult<Stripe.Price>[];
+
+  const fullValidatedCardDetails: (TProduct | null)[] =
+    pricingFulfilledList.map((price, index) => {
+      const _card = prismaCards.find((card) => card.priceId === price.value.id);
+      if (!_card) {
+        console.error("can't find card linked to pricing");
+        return null;
+      }
+
+      const parsedProduct = productSchema.safeParse(
+        mapToProduct(_card, price.value)
+      );
+      if (parsedProduct.success) return parsedProduct.data;
+      else {
+        console.error({
+          error: parsedProduct.error,
+          cardId: _card.productIdentifier,
+        });
+        return null;
+      }
+    });
+
+  return fullValidatedCardDetails.filter((card) => !!card) as TProduct[];
+};
+
+export const getProductWithPricing = async (
+  id: string
 ): Promise<TProduct | null> => {
   const prismaCard = await prisma.cardProduct.findUnique({
     where: { productIdentifier: id, active: true },
@@ -64,21 +109,14 @@ export const getProduct = async (
   });
   if (!prismaCard) return null;
 
-  if (withPricing) {
-    if (!prismaCard.priceId) throw new Error("No price id found for product");
+  if (!prismaCard.priceId) throw new Error("No price id found for product");
 
-    const stripe = getStripe();
-    const stripePricing = await stripe.prices.retrieve(prismaCard.priceId);
+  const stripePricing = await stripe.prices.retrieve(prismaCard.priceId);
 
-    return productSchema.parse(mapToProduct(prismaCard, stripePricing));
-  }
-
-  return productSchema.parse(prismaCard);
+  return productSchema.parse(mapToProduct(prismaCard, stripePricing));
 };
 
 const getPricingFromIds = async (priceIds: string[]) => {
-  const stripe = getStripe();
-
   const pricingList = await Promise.all(
     priceIds.map((priceId) => stripe.prices.retrieve(priceId))
   );
@@ -110,8 +148,6 @@ export const getAllActiveProducts = async (take: number, skip?: number) => {
 };
 
 const createStripeProduct = async (productValues: TProduct) => {
-  const stripe = getStripe();
-
   const existingProduct = await stripe.products.search({
     query: `metadata['productIdentifier']:'${productValues.productIdentifier}'`,
   });

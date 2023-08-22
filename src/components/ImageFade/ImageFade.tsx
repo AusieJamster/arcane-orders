@@ -5,7 +5,7 @@ import { TImageInfo } from "@src/types/product.types";
 
 interface ImageFadeProps {
   primaryImage?: TImageInfo;
-  title: string;
+  title?: string;
   width?: number;
   height?: number;
 }
@@ -14,7 +14,7 @@ const ImageFade: React.FC<ImageFadeProps> = ({
   primaryImage,
   width,
   height,
-  title,
+  title: altText,
 }) => {
   const [opacity, setOpacity] = useState(0);
 
@@ -36,7 +36,7 @@ const ImageFade: React.FC<ImageFadeProps> = ({
             height ?? width ?? 200
           }?text=No+Image`
         }
-        alt={primaryImage?.alt ?? title}
+        alt={primaryImage?.alt ?? altText ?? "placeholder image"}
         fill={true}
         style={{ objectFit: "contain" }}
       />

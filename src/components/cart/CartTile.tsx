@@ -11,7 +11,7 @@ import React from "react";
 import { ICart } from "@src/types/product.types";
 import ImageFade from "../ImageFade/ImageFade";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { convertNumberToCurrency } from "@src/utils";
+import { convertDollarValueToCurrency } from "@src/utils";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { QuantityChangeButton } from "./QuantityChangeButton";
@@ -100,9 +100,9 @@ const CartTile: React.FC<CartTileProps> = ({
                   }
                 >{`stock: ${product.inventory}`}</Typography>
 
-                <Typography variant="body1">{` x ${convertNumberToCurrency(
+                <Typography variant="body1">{` x ${convertDollarValueToCurrency(
                   product.priceInDollars
-                )} = ${convertNumberToCurrency(
+                )} = ${convertDollarValueToCurrency(
                   quantity * product.priceInDollars
                 )}`}</Typography>
               </Stack>
