@@ -13,6 +13,7 @@ export const env = createEnv({
     NODE_ENV: z.enum(["development", "test", "production"]),
     UPLOADTHING_SECRET: z.string(),
     UPLOADTHING_APP_ID: z.string(),
+    ORGANISATION_ID_RAREHUNTERS: z.string(),
   },
 
   /**
@@ -42,6 +43,8 @@ export const env = createEnv({
 
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
     UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
+
+    ORGANISATION_ID_RAREHUNTERS: process.env.ORGANISATION_ID_RAREHUNTERS,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

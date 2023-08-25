@@ -35,6 +35,8 @@ const sessions: NextApiHandler = async (req, res) => {
       line_items: cart,
       success_url: `${req.headers.origin}/order?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin}/cart?canceled=true`,
+      shipping_address_collection: { allowed_countries: ["AU"] },
+      billing_address_collection: "auto",
     });
 
     console.log("success", session);
