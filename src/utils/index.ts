@@ -3,8 +3,8 @@ export const convertCentValueToCurrency = (num: number) => {
 };
 
 export const convertDollarValueToCurrency = (num: number) => {
-  return num.toLocaleString("en-AU", {
-    style: "currency",
-    currency: "AUD",
+  return num.toLocaleString('en-AU', {
+    style: 'currency',
+    currency: 'AUD'
   });
 };

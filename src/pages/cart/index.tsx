@@ -5,26 +5,26 @@ import {
   Grid,
   Button,
   useMediaQuery,
-  useTheme,
-} from "@mui/material";
-import { NextPage } from "next";
-import React, { useEffect, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
-import CartTile from "@src/components/cart/CartTile";
-import store from "@src/redux/store";
-import { adjustQuantity, removeFromCart } from "src/redux/cart.slice";
-import { ICart } from "@src/types/product.types";
-import { convertDollarValueToCurrency } from "@src/utils";
-import axios from "axios";
-import Stripe from "stripe";
-import { useRouter } from "next/router";
+  useTheme
+} from '@mui/material';
+import { NextPage } from 'next';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import CartTile from '@src/components/cart/CartTile';
+import store from '@src/redux/store';
+import { adjustQuantity, removeFromCart } from 'src/redux/cart.slice';
+import { ICart } from '@src/types/product.types';
+import { convertDollarValueToCurrency } from '@src/utils';
+import axios from 'axios';
+import Stripe from 'stripe';
+import { useRouter } from 'next/router';
 
 interface CartPageProps {}
 
 const CartPage: NextPage<CartPageProps> = () => {
   const router = useRouter();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const dispatch = useDispatch();
 
   const [error, setError] = useState<string[]>([]);
@@ -68,7 +68,7 @@ const CartPage: NextPage<CartPageProps> = () => {
     dispatch(
       adjustQuantity({
         id: productIdentifier,
-        quantity: newQuantity,
+        quantity: newQuantity
       })
     );
   };
@@ -81,11 +81,11 @@ const CartPage: NextPage<CartPageProps> = () => {
     const price_items: Stripe.Checkout.SessionCreateParams.LineItem[] =
       cart.products.map((product) => ({
         price: product.product.priceId,
-        quantity: product.quantity,
+        quantity: product.quantity
       }));
 
     axios
-      .post("/api/checkout/session", { cart: price_items })
+      .post('/api/checkout/session', { cart: price_items })
       .then((res) => {
         router.push(res.data);
       })
@@ -101,19 +101,19 @@ const CartPage: NextPage<CartPageProps> = () => {
           backgroundColor: isMobile
             ? undefined
             : theme.palette.background.paper,
-          borderRadius: "20px",
+          borderRadius: '20px',
           borderColor: theme.palette.grey[800],
           borderWidth: 1,
-          borderStyle: isMobile ? "none" : "solid",
+          borderStyle: isMobile ? 'none' : 'solid'
         })}
       >
         {cart.products.length === 0 ? (
           <Typography
             sx={(theme) => ({
-              textAlign: "center",
+              textAlign: 'center',
               fontWeight: 700,
               fontSize: theme.typography.h2.fontSize,
-              margin: theme.spacing(10),
+              margin: theme.spacing(10)
             })}
           >
             No Products in Cart
@@ -147,7 +147,7 @@ const CartPage: NextPage<CartPageProps> = () => {
               onClick={handleCheckoutClick}
               sx={(theme) => ({
                 marginTop: theme.spacing(2),
-                marginBottom: theme.spacing(2),
+                marginBottom: theme.spacing(2)
               })}
               disabled={checkoutDisabled}
             >
@@ -156,7 +156,7 @@ const CartPage: NextPage<CartPageProps> = () => {
           </Stack>
         )}
       </Box>
-      {process.env.NODE_ENV === "development" &&
+      {process.env.NODE_ENV === 'development' &&
         cart.products.map((product) => (
           <Typography
             component="pre"
@@ -164,7 +164,7 @@ const CartPage: NextPage<CartPageProps> = () => {
             color="GrayText"
             margin="50px"
             maxWidth="90vw"
-            overflow={"auto"}
+            overflow={'auto'}
             key={product.product.productIdentifier}
           >
             {JSON.stringify(product, null, 2)}

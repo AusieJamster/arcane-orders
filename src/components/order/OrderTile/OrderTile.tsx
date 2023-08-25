@@ -1,10 +1,10 @@
-import { TableCell, TableRow, Typography } from "@mui/material";
-import ImageFade from "@src/components/ImageFade/ImageFade";
-import { TProduct } from "@src/types/product.types";
-import { convertCentValueToCurrency } from "@src/utils";
-import Link from "next/link";
-import React, { useMemo } from "react";
-import Stripe from "stripe";
+import { TableCell, TableRow, Typography } from '@mui/material';
+import ImageFade from '@src/components/ImageFade/ImageFade';
+import { TProduct } from '@src/types/product.types';
+import { convertCentValueToCurrency } from '@src/utils';
+import Link from 'next/link';
+import React, { useMemo } from 'react';
+import Stripe from 'stripe';
 
 interface OrderTileProps {
   lineItem: Stripe.LineItem;
@@ -18,7 +18,7 @@ const OrderTile: React.FC<OrderTileProps> = ({ lineItem, product }) => {
   );
 
   return (
-    <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
       <TableCell>
         <ImageFade
           width={80}
@@ -33,7 +33,7 @@ const OrderTile: React.FC<OrderTileProps> = ({ lineItem, product }) => {
       <TableCell>
         <Link
           href={`/products/${product?.productIdentifier}`}
-          style={{ textDecoration: "none" }}
+          style={{ textDecoration: 'none' }}
         >
           <Typography variant="h6" color="primary">
             {lineItem.description}

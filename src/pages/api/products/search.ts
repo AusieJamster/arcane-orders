@@ -1,14 +1,14 @@
-import { NextApiHandler } from "next";
-import { searchProduct } from "@src/server/product";
-import { GenericError } from "@src/utils/errors";
+import { NextApiHandler } from 'next';
+import { searchProduct } from '@src/server/product';
+import { GenericError } from '@src/utils/errors';
 
 const searchHandler: NextApiHandler = async (req, res) => {
-  if (req.method !== "GET") res.status(405).end();
+  if (req.method !== 'GET') res.status(405).end();
 
   const { query } = req.query;
 
-  if (typeof query !== "string")
-    return res.status(400).json({ message: "Invalid search query" });
+  if (typeof query !== 'string')
+    return res.status(400).json({ message: 'Invalid search query' });
 
   try {
     const results = await searchProduct(query);

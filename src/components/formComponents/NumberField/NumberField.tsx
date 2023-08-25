@@ -1,5 +1,5 @@
-import { TextField, TextFieldProps } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { TextField, TextFieldProps } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 
 interface NumberFieldProps {
   label: string;
@@ -13,15 +13,15 @@ const NumberField: React.FC<NumberFieldProps & TextFieldProps> = ({
   label,
   ...props
 }) => {
-  const [inputValue, setInputValue] = useState<string>(value.toString() || "");
+  const [inputValue, setInputValue] = useState<string>(value.toString() || '');
 
   useEffect(() => {
-    setInputValue(value !== 0 ? value.toString() : "");
+    setInputValue(value !== 0 ? value.toString() : '');
   }, [value]);
 
   const updateInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     const strValue = event.target.value
-      .replace(/[^0-9.]/gi, "")
+      .replace(/[^0-9.]/gi, '')
       .substring(0, 15);
 
     try {

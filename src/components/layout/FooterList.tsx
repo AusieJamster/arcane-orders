@@ -1,6 +1,6 @@
-import { Box } from "@mui/material";
-import { PageLinks } from "@src/types/layout.types";
-import { ArcaneLink } from "../ArcaneLink";
+import { Box } from '@mui/material';
+import { PageLinks } from '@src/types/layout.types';
+import { ArcaneLink } from '../ArcaneLink';
 
 interface IFooterListProps {
   links: PageLinks[];

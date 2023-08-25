@@ -1,1 +1,1 @@
-export { default } from "./OrderTile";
+export { default } from './OrderTile';

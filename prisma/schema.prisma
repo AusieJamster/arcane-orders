@@ -13,7 +13,8 @@ datasource db {
 
 model ImageInfo {
   isPrimary          Boolean
-  url                String       @id @unique @db.VarChar(256)
+  key                String       @id @unique @db.VarChar(256)
+  url                String       @unique @db.VarChar(256)
   alt                String?      @db.TinyText
   CardProduct        CardProduct? @relation(fields: [cardProductCardNum], references: [productIdentifier])
   cardProductCardNum String?
@@ -30,7 +31,7 @@ model CardProduct {
   unit_label String  @db.VarChar(20)
   inventory  Int     @db.UnsignedTinyInt
 
-  productIdentifier String      @id @default(cuid())
+  productIdentifier String      @id @unique @db.VarChar(50)
   createdAt         DateTime    @default(now())
   title             String      @db.VarChar(50)
   set               String      @db.VarChar(50)

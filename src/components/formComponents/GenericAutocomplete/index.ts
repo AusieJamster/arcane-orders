@@ -1,1 +1,1 @@
-export { default } from "./GenericAutocomplete";
+export { default } from './GenericAutocomplete';

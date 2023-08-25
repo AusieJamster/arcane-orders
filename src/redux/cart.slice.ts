@@ -1,12 +1,12 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ICart, TProduct } from "@src/types/product.types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ICart, TProduct } from '@src/types/product.types';
 
 const initialState: ICart = {
-  products: [],
+  products: []
 };
 
 const cartSlice = createSlice({
-  name: "cart",
+  name: 'cart',
   initialState,
   reducers: {
     addToCart: (state, action: PayloadAction<TProduct>) => {
@@ -41,8 +41,8 @@ const cartSlice = createSlice({
       } else {
         console.error("Product you wish to remove wasn't found in the cart");
       }
-    },
-  },
+    }
+  }
 });
 
 export const cartReducer = cartSlice.reducer;

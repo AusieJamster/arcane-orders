@@ -1,1 +1,1 @@
-export { default } from "./ProductTile";
+export { default } from './ProductTile';

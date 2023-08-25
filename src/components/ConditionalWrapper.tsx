@@ -1,4 +1,4 @@
-import React, { ReactNode, ReactElement } from "react";
+import React, { ReactNode, ReactElement } from 'react';
 
 interface ConditionalWrapperProps {
   condition: boolean;
@@ -9,7 +9,7 @@ interface ConditionalWrapperProps {
 const ConditionalWrapper: React.FC<ConditionalWrapperProps> = ({
   condition,
   wrapper,
-  children,
+  children
 }) => (condition ? wrapper(children) : children);
 
 export default ConditionalWrapper;

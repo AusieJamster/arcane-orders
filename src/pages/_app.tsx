@@ -1,14 +1,14 @@
-import React from "react";
-import * as Theme from "../styles/global.theme";
-import type { AppProps } from "next/app";
-import { EmotionCache } from "@emotion/react";
-import Head from "next/head";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import { Provider } from "react-redux";
-import store from "src/redux/store";
-import Layout from "@src/components/layout/Layout";
-import { PageLinks } from "@src/types/layout.types";
-import { ClerkProvider } from "@clerk/nextjs";
+import React from 'react';
+import * as Theme from '../styles/global.theme';
+import type { AppProps } from 'next/app';
+import { EmotionCache } from '@emotion/react';
+import Head from 'next/head';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { Provider } from 'react-redux';
+import store from 'src/redux/store';
+import Layout from '@src/components/layout/Layout';
+import { PageLinks } from '@src/types/layout.types';
+import { ClerkProvider } from '@clerk/nextjs';
 
 interface IMyAppProps extends AppProps {
   Component: React.FC;
@@ -19,9 +19,9 @@ interface IMyAppProps extends AppProps {
 export default function MyApp({ Component, pageProps }: IMyAppProps) {
   const brand: PageLinks[] = [
     {
-      name: "products",
-      link: "/products",
-    },
+      name: 'products',
+      link: '/products'
+    }
   ];
 
   return (

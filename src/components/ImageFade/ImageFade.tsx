@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Box } from "@mui/system";
-import Image from "next/image";
-import { TImageInfo } from "@src/types/product.types";
+import React, { useState } from 'react';
+import { Box } from '@mui/system';
+import Image from 'next/image';
+import { TImageInfo } from '@src/types/product.types';
 
 interface ImageFadeProps {
   primaryImage?: TImageInfo;
@@ -14,7 +14,7 @@ const ImageFade: React.FC<ImageFadeProps> = ({
   primaryImage,
   width,
   height,
-  title: altText,
+  title: altText
 }) => {
   const [opacity, setOpacity] = useState(0);
 
@@ -24,10 +24,10 @@ const ImageFade: React.FC<ImageFadeProps> = ({
 
   return (
     <Box
-      width={width || "100%"}
-      height={height || "100%"}
+      width={width || '100%'}
+      height={height || '100%'}
       position="relative"
-      sx={{ opacity, transition: "all 1s ease-in-out" }}
+      sx={{ opacity, transition: 'all 1s ease-in-out' }}
     >
       <Image
         src={
@@ -36,9 +36,9 @@ const ImageFade: React.FC<ImageFadeProps> = ({
             height ?? width ?? 200
           }?text=No+Image`
         }
-        alt={primaryImage?.alt ?? altText ?? "placeholder image"}
+        alt={primaryImage?.alt ?? altText ?? 'placeholder image'}
         fill={true}
-        style={{ objectFit: "contain" }}
+        style={{ objectFit: 'contain' }}
       />
     </Box>
   );

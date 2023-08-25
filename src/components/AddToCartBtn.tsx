@@ -1,9 +1,9 @@
-import { Button, ButtonTypeMap } from "@mui/material";
-import { addToCart } from "src/redux/cart.slice";
-import { useDispatch } from "react-redux";
-import { IStripeProduct } from "@src/types/product.types";
+import { Button, ButtonTypeMap } from '@mui/material';
+import { addToCart } from 'src/redux/cart.slice';
+import { useDispatch } from 'react-redux';
+import { IStripeProduct } from '@src/types/product.types';
 
-interface IAddToCartBtn extends Partial<Pick<ButtonTypeMap, "props">> {
+interface IAddToCartBtn extends Partial<Pick<ButtonTypeMap, 'props'>> {
   product: IStripeProduct;
   quantity?: number;
   [key: string]: unknown;

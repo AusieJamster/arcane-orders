@@ -1,5 +1,5 @@
-import { IconButton } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import { IconButton } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 
 interface IMenuToggleProps {
   handleOpenNavMenu: React.MouseEventHandler;

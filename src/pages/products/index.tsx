@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from "react";
-import type { GetServerSideProps, NextPage } from "next";
-import {
-  getAllActiveProducts,
-  getAllCardTitles,
-} from "@src/server/product";
-import { ICart, TProduct } from "@src/types/product.types";
-import { Autocomplete, Stack, TextField } from "@mui/material";
-import ProductTile from "@src/components/products/ProductTile";
-import { useDispatch } from "react-redux";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { addToCart } from "src/redux/cart.slice";
-import store from "@src/redux/store";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import type { GetServerSideProps, NextPage } from 'next';
+import { getAllActiveProducts } from '@src/server/product';
+import { ICart, TProduct } from '@src/types/product.types';
+import { Autocomplete, Stack, TextField } from '@mui/material';
+import ProductTile from '@src/components/products/ProductTile';
+import { useDispatch } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { addToCart } from 'src/redux/cart.slice';
+import store from '@src/redux/store';
+import axios from 'axios';
+import { getAllCardTitles } from '@src/server/prisma';
 
 interface ResultsPageProps {
   products: TProduct[];
@@ -34,7 +32,7 @@ const Product: NextPage<ResultsPageProps> = ({ products, allCardTitles }) => {
   };
 
   const handleAddToCart = (product: TProduct) => {
-    toast(`Added ${product.title} to the cart`, { theme: "dark" });
+    toast(`Added ${product.title} to the cart`, { theme: 'dark' });
     dispatch(addToCart(product));
   };
 
@@ -59,7 +57,7 @@ const Product: NextPage<ResultsPageProps> = ({ products, allCardTitles }) => {
   return (
     <Stack justifyContent="center" alignItems="center" marginY={2}>
       <Autocomplete
-        sx={{ minWidth: "50vw", marginY: 10 }}
+        sx={{ minWidth: '50vw', marginY: 10 }}
         disablePortal
         options={allCardTitles}
         renderInput={(params) => <TextField {...params} label="Search" />}
@@ -91,7 +89,7 @@ export default Product;
 export const getServerSideProps: GetServerSideProps = async () => {
   const [products, allCardTitles] = await Promise.all([
     getAllActiveProducts(40),
-    getAllCardTitles(),
+    getAllCardTitles()
   ]);
 
   return { props: { products, allCardTitles } };

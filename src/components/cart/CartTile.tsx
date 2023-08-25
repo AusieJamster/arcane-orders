@@ -5,19 +5,19 @@ import {
   Stack,
   IconButton,
   TextField,
-  Button,
-} from "@mui/material";
-import React from "react";
-import { ICart } from "@src/types/product.types";
-import ImageFade from "../ImageFade/ImageFade";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { convertDollarValueToCurrency } from "@src/utils";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { QuantityChangeButton } from "./QuantityChangeButton";
+  Button
+} from '@mui/material';
+import React from 'react';
+import { ICart } from '@src/types/product.types';
+import ImageFade from '../ImageFade/ImageFade';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { convertDollarValueToCurrency } from '@src/utils';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { QuantityChangeButton } from './QuantityChangeButton';
 
 interface CartTileProps {
-  productInCart: ICart["products"][number];
+  productInCart: ICart['products'][number];
   onQuantityChangeEvent: (productIdentifier: string, quantity: number) => void;
   onRemoveFromCart: (productIdentifier: string) => void;
 }
@@ -25,7 +25,7 @@ interface CartTileProps {
 const CartTile: React.FC<CartTileProps> = ({
   productInCart,
   onQuantityChangeEvent,
-  onRemoveFromCart,
+  onRemoveFromCart
 }) => {
   const { product, quantity } = productInCart;
 
@@ -55,8 +55,8 @@ const CartTile: React.FC<CartTileProps> = ({
         borderRadius: 5,
         borderColor: theme.palette.grey[800],
         borderWidth: 1,
-        borderStyle: "solid",
-        padding: 2,
+        borderStyle: 'solid',
+        padding: 2
       })}
     >
       <Stack direction="row" justifyContent="space-between">
@@ -79,7 +79,7 @@ const CartTile: React.FC<CartTileProps> = ({
                 onChange={handleQuantityChange}
                 value={quantity}
                 size="small"
-                sx={{ maxWidth: "25%" }}
+                sx={{ maxWidth: '25%' }}
               />
               <Stack direction="column" marginRight={1}>
                 <QuantityChangeButton onClick={handleQuantityButtonClick(true)}>
@@ -96,7 +96,7 @@ const CartTile: React.FC<CartTileProps> = ({
                   variant="body2"
                   textAlign="end"
                   color={
-                    quantity === product.inventory ? "secondary" : "grey.500"
+                    quantity === product.inventory ? 'secondary' : 'grey.500'
                   }
                 >{`stock: ${product.inventory}`}</Typography>
 

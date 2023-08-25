@@ -1,5 +1,5 @@
-import { TextField, TextFieldProps } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { TextField, TextFieldProps } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 
 interface NameFieldProps {
   label: string;
@@ -17,7 +17,7 @@ const NameField: React.FC<NameFieldProps & TextFieldProps> = ({
   replacementRegex = /[^0-9a-z ]/gi,
   ...props
 }) => {
-  const [inputValue, setInputValue] = useState<string>("");
+  const [inputValue, setInputValue] = useState<string>('');
 
   useEffect(() => {
     setInputValue(value);
@@ -25,7 +25,7 @@ const NameField: React.FC<NameFieldProps & TextFieldProps> = ({
 
   const updateInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     const value = event.target.value
-      .replace(replacementRegex, "")
+      .replace(replacementRegex, '')
       .substring(0, MAX_NAME_LENGTH);
 
     try {

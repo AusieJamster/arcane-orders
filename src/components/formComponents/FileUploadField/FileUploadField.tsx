@@ -7,14 +7,14 @@ import {
   Radio,
   RadioGroup,
   TextField,
-  Typography,
-} from "@mui/material";
-import { Stack } from "@mui/system";
-import CloseIcon from "@mui/icons-material/Close";
-import React from "react";
-import "@uploadthing/react/styles.css";
-import { UploadButton } from "@src/utils/uploadthing";
-import { TPostUploadImageFile } from "@src/types/product.types";
+  Typography
+} from '@mui/material';
+import { Stack } from '@mui/system';
+import CloseIcon from '@mui/icons-material/Close';
+import React from 'react';
+import '@uploadthing/react/styles.css';
+import { UploadButton } from '@src/utils/uploadthing';
+import { TPostUploadImageFile } from '@src/types/product.types';
 
 interface FileUploadFieldProps {
   imageUpdate: (images: TPostUploadImageFile[]) => void;
@@ -37,7 +37,7 @@ const FileUploadField: React.FC<FileUploadFieldProps> = ({
   primaryIdx,
   primaryIdxUpdate,
   imageAltText,
-  handleImageAltUpdate,
+  handleImageAltUpdate
 }) => {
   return (
     <>
@@ -55,13 +55,13 @@ const FileUploadField: React.FC<FileUploadFieldProps> = ({
               justifyContent="center"
               key={`image-name-${i}`}
             >
-              <Grid item xs={6} sx={{ overflow: "hidden" }}>
+              <Grid item xs={6} sx={{ overflow: 'hidden' }}>
                 <FormControlLabel
                   value={i}
                   control={<Radio />}
                   label={
                     <Typography fontSize="small">
-                      {img.key.substring(img.key.indexOf("_") + 1)}
+                      {img.key.substring(img.key.indexOf('_') + 1)}
                     </Typography>
                   }
                 />
@@ -78,7 +78,7 @@ const FileUploadField: React.FC<FileUploadFieldProps> = ({
                   <TextField
                     size="small"
                     placeholder="alt text"
-                    value={imageAltText[i] || ""}
+                    value={imageAltText[i] || ''}
                     fullWidth
                     onChange={(event) =>
                       handleImageAltUpdate(i, event.target.value)

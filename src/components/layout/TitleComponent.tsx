@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Typography } from '@mui/material';
 
 interface ITitleComponentProps {
   title: string;
@@ -7,7 +7,7 @@ interface ITitleComponentProps {
 
 const TitleComponent: React.FC<ITitleComponentProps> = ({
   title,
-  isMobile,
+  isMobile
 }) => (
   <Typography
     variant="h6"
@@ -17,13 +17,13 @@ const TitleComponent: React.FC<ITitleComponentProps> = ({
     sx={{
       mr: 2,
       display: isMobile
-        ? { xs: "flex", md: "none" }
-        : { xs: "none", md: "flex" },
+        ? { xs: 'flex', md: 'none' }
+        : { xs: 'none', md: 'flex' },
       flexGrow: isMobile ? 1 : 0,
       fontWeight: 700,
-      textTransform: "lowercase",
-      color: "inherit",
-      textDecoration: "none",
+      textTransform: 'lowercase',
+      color: 'inherit',
+      textDecoration: 'none'
     }}
   >
     {title}

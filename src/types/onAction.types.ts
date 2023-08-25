@@ -10,7 +10,7 @@ export type IOnActionProductCreationArgs =
   | OnActionArgs<ProductCreationActionType.PRICE_UPDATE, number>;
 
 export enum ProductCreationActionType {
-  INFO = "info",
-  TITLE_UPDATE = "title/update",
-  PRICE_UPDATE = "price/update",
+  INFO = 'info',
+  TITLE_UPDATE = 'title/update',
+  PRICE_UPDATE = 'price/update'
 }

@@ -1,5 +1,5 @@
-describe("Example", () => {
-  test("should first", () => {
+describe('Example', () => {
+  test('should first', () => {
     expect(true).toStrictEqual(true);
   });
 });

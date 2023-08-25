@@ -3,14 +3,14 @@ import {
   TextField,
   AutocompleteProps,
   FormControl,
-  FormHelperText,
-} from "@mui/material";
-import React from "react";
-import { Control, Controller, FieldValues } from "react-hook-form";
+  FormHelperText
+} from '@mui/material';
+import React from 'react';
+import { Control, Controller, FieldValues } from 'react-hook-form';
 
 type RarityFieldAutocompleteProps<T, U extends boolean | undefined> = Omit<
   AutocompleteProps<T, U, false, false>,
-  "renderInput"
+  'renderInput'
 >;
 
 interface GenericAutocompleteProps<T, U extends boolean | undefined>
@@ -31,13 +31,14 @@ const GenericAutocomplete = <T, U extends boolean | undefined = false>({
   ...props
 }: GenericAutocompleteProps<T, U>) => (
   <Controller
-    render={({ field: { onChange } }) => (
+    render={({ field: { value, onChange } }) => (
       <FormControl fullWidth>
         <Autocomplete
           disablePortal
           options={options}
           renderInput={(params) => <TextField {...params} label={label} />}
           onChange={(e, data) => onChange(data)}
+          value={value}
           {...props}
         />
         <FormHelperText color="error" error={!!errorMessage}>

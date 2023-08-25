@@ -1,8 +1,8 @@
-import { Button, Stack, Typography } from "@mui/material";
-import ImageFade from "@src/components/ImageFade/ImageFade";
-import { TProduct } from "@src/types/product.types";
-import Link from "next/link";
-import React, { useMemo } from "react";
+import { Button, Stack, Typography } from '@mui/material';
+import ImageFade from '@src/components/ImageFade/ImageFade';
+import { TProduct } from '@src/types/product.types';
+import Link from 'next/link';
+import React, { useMemo } from 'react';
 
 interface ProductTileProps {
   product: TProduct;
@@ -16,7 +16,7 @@ const LOW_STOCK = 5 as const;
 const ProductTile: React.FC<ProductTileProps> = ({
   product,
   handleAddToCart,
-  stockInCart: stockInCart,
+  stockInCart: stockInCart
 }) => {
   const primaryImage = useMemo(
     () => product.imgs.find((img) => img.isPrimary),
@@ -32,15 +32,15 @@ const ProductTile: React.FC<ProductTileProps> = ({
   const displayText = useMemo(() => {
     if (stockInCart > 0) {
       if (stockInCart >= product.inventory) {
-        return "Remaining Stock In Cart";
+        return 'Remaining Stock In Cart';
       } else {
         return `${stockInCart} in Cart`;
       }
     } else {
       if (isOutOfStock) {
-        return "Out of Stock";
+        return 'Out of Stock';
       } else {
-        return "Add to Cart";
+        return 'Add to Cart';
       }
     }
   }, [stockInCart, product.inventory, isOutOfStock]);
@@ -49,7 +49,7 @@ const ProductTile: React.FC<ProductTileProps> = ({
     <Stack width={BASE_WIDTH} height={400} justifyContent="space-between">
       <Link
         href={`/products/${product.productIdentifier}`}
-        style={{ textDecoration: "none" }}
+        style={{ textDecoration: 'none' }}
       >
         <ImageFade
           primaryImage={primaryImage}
@@ -66,7 +66,7 @@ const ProductTile: React.FC<ProductTileProps> = ({
         {product.inventory < LOW_STOCK && (
           <Typography textAlign="center" variant="body2" color="secondary">
             {product.inventory === 0
-              ? "Out of Stock"
+              ? 'Out of Stock'
               : `Only ${product.inventory} left!`}
           </Typography>
         )}

@@ -11,18 +11,18 @@ import {
   TableRow,
   Typography,
   useMediaQuery,
-  useTheme,
-} from "@mui/material";
-import { getProductsWithPricingByPriceId } from "@src/server/product";
-import { TProduct } from "@src/types/product.types";
-import { getStripe } from "@src/utils/stripe";
-import { GetServerSideProps, NextPage } from "next";
-import React, { useEffect, useState } from "react";
-import OrderTile from "src/components/order/OrderTile";
-import Stripe from "stripe";
-import axios from "axios";
-import { IListLineItemsResponse } from "../api/checkout/listLineItems/[id]";
-import { convertCentValueToCurrency } from "@src/utils";
+  useTheme
+} from '@mui/material';
+import { getProductsWithPricingByPriceId } from '@src/server/product';
+import { TProduct } from '@src/types/product.types';
+import { getStripe } from '@src/utils/stripe';
+import { GetServerSideProps, NextPage } from 'next';
+import React, { useEffect, useState } from 'react';
+import OrderTile from 'src/components/order/OrderTile';
+import Stripe from 'stripe';
+import axios from 'axios';
+import { IListLineItemsResponse } from '../api/checkout/listLineItems/[id]';
+import { convertCentValueToCurrency } from '@src/utils';
 
 interface OrderPageProps {
   order: Stripe.Checkout.Session | null;
@@ -32,7 +32,7 @@ interface OrderPageProps {
 
 const OrderPage: NextPage<OrderPageProps> = ({ order, ...props }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [products, setProducts] = useState<TProduct[]>(props.products);
   const [lineItems, setLineItems] = useState<Stripe.LineItem[]>(
     props.lineItems?.data ?? []
@@ -47,8 +47,8 @@ const OrderPage: NextPage<OrderPageProps> = ({ order, ...props }) => {
     axios
       .get<IListLineItemsResponse>(`/api/checkout/listLineItems/${order?.id}`, {
         params: {
-          startingAfter: lineItems[lineItems.length - 1].id,
-        },
+          startingAfter: lineItems[lineItems.length - 1].id
+        }
       })
       .then((res) => {
         setLoadMore(res.data.hasMore);
@@ -70,19 +70,19 @@ const OrderPage: NextPage<OrderPageProps> = ({ order, ...props }) => {
           backgroundColor: isMobile
             ? undefined
             : theme.palette.background.paper,
-          borderRadius: "20px",
+          borderRadius: '20px',
           borderColor: theme.palette.grey[800],
           borderWidth: 1,
-          borderStyle: isMobile ? "none" : "solid",
+          borderStyle: isMobile ? 'none' : 'solid'
         })}
       >
         {!order ? (
           <Typography
             sx={(theme) => ({
-              textAlign: "center",
+              textAlign: 'center',
               fontWeight: 700,
               fontSize: theme.typography.h2.fontSize,
-              margin: theme.spacing(10),
+              margin: theme.spacing(10)
             })}
           >
             No Order Found
@@ -141,14 +141,14 @@ const OrderPage: NextPage<OrderPageProps> = ({ order, ...props }) => {
           </>
         )}
       </Stack>
-      {process.env.NODE_ENV === "development" && (
+      {process.env.NODE_ENV === 'development' && (
         <Typography
           component="pre"
           variant="caption"
           color="GrayText"
           margin="50px"
           maxWidth="90vw"
-          overflow={"auto"}
+          overflow={'auto'}
         >
           {JSON.stringify(order, null, 2)}
         </Typography>
@@ -171,7 +171,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const [ord, lines] = await Promise.all([
       stripe.checkout.sessions.retrieve(_id),
-      stripe.checkout.sessions.listLineItems(_id, { limit: 20 }),
+      stripe.checkout.sessions.listLineItems(_id, { limit: 20 })
     ]);
     order = ord;
     lineItems = lines;

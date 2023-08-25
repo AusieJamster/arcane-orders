@@ -1,11 +1,11 @@
-import { NextApiHandler } from "next";
-import { getStripe } from "@src/utils/stripe";
-import { utapi } from "uploadthing/server";
+import { NextApiHandler } from 'next';
+import { getStripe } from '@src/utils/stripe';
+import { utapi } from 'uploadthing/server';
 
 const stripe = getStripe();
 
 const deleteImages: NextApiHandler<boolean> = async (req, res) => {
-  if (req.method !== "DELETE") {
+  if (req.method !== 'DELETE') {
     res.status(405).end();
     return;
   }

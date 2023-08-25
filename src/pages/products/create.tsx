@@ -11,12 +11,12 @@ import {
   Stack,
   Switch,
   TextField,
-  Typography,
-} from "@mui/material";
-import React, { useState } from "react";
-import GenericAutocomplete from "@src/components/formComponents/GenericAutocomplete";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+  Typography
+} from '@mui/material';
+import React, { useState } from 'react';
+import GenericAutocomplete from '@src/components/formComponents/GenericAutocomplete';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import {
   ECardAttribute,
   ECardLinkArrows,
@@ -25,29 +25,40 @@ import {
   ECardType,
   EMonsterType,
   TPostUploadImageFile,
+  TProduct,
   productCreateCardFormSchema,
-  productCreateMonsterFormSchema,
-} from "@src/types/product.types";
-import FileUploadField from "@src/components/formComponents/FileUploadField/FileUploadField";
-import axios from "axios";
-import { useRouter } from "next/router";
+  productCreateMonsterFormSchema
+} from '@src/types/product.types';
+import FileUploadField from '@src/components/formComponents/FileUploadField/FileUploadField';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
+import { getProductWithPricingByProductIdentifier } from '@src/server/product';
 
-interface CreateProductProps {}
+interface CreateProductProps {
+  product: TProduct | null;
+}
 
-const CreateProduct: React.FC<CreateProductProps> = ({}) => {
+const CreateProduct: React.FC<CreateProductProps> = ({
+  product: productToUpdate
+}) => {
   const router = useRouter();
 
-  const [isMonster, setIsMonster] = useState<boolean>(false);
+  const [isMonster, setIsMonster] = useState<boolean>(!!productToUpdate?.level);
 
-  const [images, setImages] = useState<TPostUploadImageFile[]>([]);
+  const [images, setImages] = useState<TPostUploadImageFile[]>(
+    productToUpdate?.imgs ?? []
+  );
   const [imageErrors, setImageErrors] = useState<string | null>(null);
-  const [primaryIdx, setPrimaryIdx] = useState<string>("0");
-  const [imageAltText, setImageAltText] = useState<string[]>([]);
+  const [primaryIdx, setPrimaryIdx] = useState<string>('0');
+  const [imageAltText, setImageAltText] = useState<string[]>(
+    productToUpdate?.imgs.map((img) => img.alt ?? '') ?? []
+  );
 
   const handleRemoveImage = (index: number) => {
     axios
-      .delete(`/api/deleteImages`, {
-        data: [images[index].key],
+      .delete('/api/deleteImages', {
+        data: [images[index].key]
       })
       .then(() => {
         setImageErrors(null);
@@ -58,7 +69,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
       })
       .catch((err) => {
         console.error(err);
-        setImageErrors("Error removing image");
+        setImageErrors('Error removing image');
       });
   };
 
@@ -69,11 +80,11 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
     }
 
     if (files.length < 1) {
-      setImageErrors("Must have at least 1 image");
+      setImageErrors('Must have at least 1 image');
       return;
     }
     if (files.length + images.length > 8) {
-      setImageErrors("Cannot have more than 8 images");
+      setImageErrors('Cannot have more than 8 images');
       return;
     }
 
@@ -89,34 +100,34 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
     watch,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm({
     resolver: zodResolver(
       isMonster ? productCreateMonsterFormSchema : productCreateCardFormSchema
     ),
     defaultValues: {
-      active: true,
-      priceInDollars: undefined,
-      unit_label: undefined,
-      inventory: undefined,
+      active: productToUpdate?.active ?? true,
+      priceInDollars: productToUpdate?.priceInDollars,
+      unit_label: productToUpdate?.unit_label,
+      inventory: productToUpdate?.inventory,
 
-      title: undefined,
-      set: undefined,
-      productIdentifier: undefined,
-      rarity: undefined,
-      imgs: [],
-      description: undefined,
-      attribute: undefined,
-      subclass: undefined,
+      title: productToUpdate?.title,
+      set: productToUpdate?.set,
+      productIdentifier: productToUpdate?.productIdentifier,
+      rarity: productToUpdate?.rarity,
+      imgs: productToUpdate?.imgs ?? [],
+      description: productToUpdate?.description,
+      attribute: productToUpdate?.attribute,
+      subclass: productToUpdate?.subclass,
 
-      level: undefined,
-      attackValue: undefined,
-      defenseValue: undefined,
-      monsterType: EMonsterType.NORMAL,
-      hasEffect: undefined,
-      linkRating: undefined,
-      linkArrows: undefined,
-    },
+      level: productToUpdate?.level,
+      attackValue: productToUpdate?.attackValue,
+      defenseValue: productToUpdate?.defenseValue,
+      monsterType: productToUpdate?.monsterType ?? EMonsterType.NORMAL,
+      hasEffect: productToUpdate?.hasEffect ?? false,
+      linkRating: productToUpdate?.linkRating,
+      linkArrows: productToUpdate?.linkRating
+    }
   });
 
   const handleImageAltUpdate = (idx: number, altText: string) => {
@@ -137,15 +148,34 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
       throw new Error(cardData.error.message);
     }
 
-    // TODO: upload these images to the server
+    if (images.length < 1 || images.length > 8) {
+      throw new Error('Must have at least 1 image and no more than 8 images');
+    }
+
     const imgObjs = images.map((img, i) => ({
+      key: img.key,
       alt: imageAltText[i],
       url: img.url,
-      isPrimary: img.key === images[parseInt(primaryIdx)].key,
+      isPrimary: img.key === images[parseInt(primaryIdx)].key
     }));
 
-    axios
-      .put("/api/products/create", { ...cardData.data, imgs: imgObjs })
+    let action = axios.put;
+    let url = '/api/products/create';
+    let body: Record<string, unknown> = { ...cardData.data, imgs: imgObjs };
+
+    if (!!productToUpdate) {
+      action = axios.post;
+      url = '/api/products/update';
+      body = {
+        ...cardData.data,
+        imgs: imgObjs,
+        priceId: productToUpdate.priceId,
+        createdBy: productToUpdate.createdBy,
+        productId: productToUpdate.productId
+      };
+    }
+
+    action(url, body)
       .then((res) => {
         router.push(`/products/${cardData.data.productIdentifier}`);
       })
@@ -177,7 +207,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
       >
         <Grid item xs={12} sm={6} md={4} xl={3}>
           <FormControlLabel
-            control={<Switch {...register("active")} defaultChecked />}
+            control={<Switch {...register('active')} defaultChecked />}
             label="Active Product"
           />
         </Grid>
@@ -191,9 +221,9 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
                 <InputAdornment position="start">$</InputAdornment>
               }
               label="Amount"
-              {...register("priceInDollars", {
+              {...register('priceInDollars', {
                 required: true,
-                valueAsNumber: true,
+                valueAsNumber: true
               })}
             />
             <FormHelperText>{errors.priceInDollars?.message}</FormHelperText>
@@ -207,7 +237,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
             helperText={errors.unit_label?.message}
             label="Unit Label"
             placeholder="card"
-            {...register("unit_label", { required: true })}
+            {...register('unit_label', { required: true })}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4} xl={3}>
@@ -217,7 +247,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
             helperText={errors.inventory?.message}
             label="Inventory"
             placeholder="10"
-            {...register("inventory", { required: true, valueAsNumber: true })}
+            {...register('inventory', { required: true, valueAsNumber: true })}
           />
         </Grid>
         <Grid item xs={11}>
@@ -234,7 +264,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
           />
         </Grid>
       </Grid>
-      <Divider sx={{ width: "80%" }} />
+      <Divider sx={{ width: '80%' }} />
       <Typography variant="h4">Card Information</Typography>
       <Grid
         width="100%"
@@ -252,13 +282,13 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
             helperText={errors.title?.message}
             label="Title"
             placeholder="Salamangreat of Fire"
-            {...register("title", { required: true })}
+            {...register('title', { required: true })}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4} xl={3}>
           <GenericAutocomplete<ECardSet, false>
             control={control}
-            label={"Set"}
+            label={'Set'}
             options={Object.values(ECardSet)}
             fieldKey="set"
             errorMessage={errors.set?.message}
@@ -271,14 +301,14 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
             placeholder="LD10-EN001"
             error={!!errors.productIdentifier?.message}
             helperText={errors.productIdentifier?.message}
-            {...register("productIdentifier", { required: true })}
+            {...register('productIdentifier', { required: true })}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4} xl={3}>
           <GenericAutocomplete<ECardRarity>
             fieldKey="rarity"
             control={control}
-            label={"Rarity"}
+            label={'Rarity'}
             options={Object.values(ECardRarity)}
             errorMessage={errors.rarity?.message}
           />
@@ -287,7 +317,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
         <Grid item xs={12} sm={6} md={4} xl={3}>
           <GenericAutocomplete<ECardAttribute>
             control={control}
-            label={"Attribute"}
+            label={'Attribute'}
             options={Object.values(ECardAttribute)}
             fieldKey="attribute"
             errorMessage={errors.attribute?.message}
@@ -296,7 +326,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
         <Grid item xs={12} sm={6} md={4} xl={3}>
           <GenericAutocomplete<ECardType>
             control={control}
-            label={"Card Type"}
+            label={'Card Type'}
             options={Object.values(ECardType)}
             fieldKey="subclass"
             errorMessage={errors.subclass?.message}
@@ -310,11 +340,11 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
             multiline
             error={!!errors.description?.message}
             helperText={errors.description?.message}
-            {...register("description", { required: true })}
+            {...register('description', { required: true })}
           />
         </Grid>
       </Grid>
-      <Divider sx={{ width: "80%" }} />
+      <Divider sx={{ width: '80%' }} />
       <Typography variant="h4">Monster Information</Typography>
       <Grid
         width="100%"
@@ -345,7 +375,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
                 placeholder="4"
                 error={!!errors.level?.message}
                 helperText={errors.level?.message}
-                {...register("level", { required: true, valueAsNumber: true })}
+                {...register('level', { required: true, valueAsNumber: true })}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} xl={3}>
@@ -355,9 +385,9 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
                 placeholder="2000"
                 error={!!errors.attackValue?.message}
                 helperText={errors.attackValue?.message}
-                {...register("attackValue", {
+                {...register('attackValue', {
                   required: true,
-                  valueAsNumber: true,
+                  valueAsNumber: true
                 })}
               />
             </Grid>
@@ -368,9 +398,9 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
                 placeholder="2000"
                 error={!!errors.defenseValue?.message}
                 helperText={errors.defenseValue?.message}
-                {...register("defenseValue", {
+                {...register('defenseValue', {
                   required: true,
-                  valueAsNumber: true,
+                  valueAsNumber: true
                 })}
               />
             </Grid>
@@ -378,18 +408,18 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
               <GenericAutocomplete<EMonsterType>
                 fieldKey="monsterType"
                 control={control}
-                label={"Monster Type"}
+                label={'Monster Type'}
                 options={Object.values(EMonsterType)}
                 errorMessage={errors.monsterType?.message}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} xl={3}>
               <FormControlLabel
-                control={<Switch {...register("hasEffect")} defaultChecked />}
+                control={<Switch {...register('hasEffect')} defaultChecked />}
                 label="Has Effect"
               />
             </Grid>
-            {watch("monsterType") === EMonsterType.LINK && (
+            {watch('monsterType') === EMonsterType.LINK && (
               <>
                 <Grid item xs={12} sm={6} md={4} xl={3}>
                   <TextField
@@ -397,9 +427,9 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
                     placeholder="4"
                     error={!!errors.linkRating?.message}
                     helperText={errors.linkRating?.message}
-                    {...register("linkRating", {
+                    {...register('linkRating', {
                       required: true,
-                      setValueAs: (v) => parseInt(v) || undefined,
+                      setValueAs: (v) => parseInt(v) || undefined
                     })}
                   />
                 </Grid>
@@ -407,7 +437,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
                   <GenericAutocomplete<ECardLinkArrows, true>
                     multiple
                     fieldKey="linkArrows"
-                    label={"Link Arrows"}
+                    label={'Link Arrows'}
                     options={Object.values(ECardLinkArrows)}
                     control={control}
                     errorMessage={errors.linkArrows?.message}
@@ -418,7 +448,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
           </>
         )}
       </Grid>
-      <Divider sx={{ width: "80%" }} />
+      <Divider sx={{ width: '80%' }} />
       <Button fullWidth variant="contained" type="submit">
         Submit
       </Button>
@@ -427,3 +457,16 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
 };
 
 export default CreateProduct;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const id = context.query?.id;
+
+  console.log('\u001b[1;31m id \u001b[0m', id);
+
+  let product = null;
+  if (typeof id === 'string') {
+    product = await getProductWithPricingByProductIdentifier(id);
+  }
+
+  return { props: { product } };
+};

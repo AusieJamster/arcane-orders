@@ -1,11 +1,11 @@
 import { NextApiHandler } from 'next';
 import { getAuth } from '@clerk/nextjs/server';
-import { preProductSchema } from '@src/types/product.types';
-import { createProduct } from '@src/server/product';
+import { productSchema } from '@src/types/product.types';
+import { updateProduct } from '@src/server/product';
 import { GenericError } from '@src/utils/errors';
 
-const createHandler: NextApiHandler = async (req, res) => {
-  if (req.method !== 'PUT') res.status(405).end();
+const updateHandler: NextApiHandler = async (req, res) => {
+  if (req.method !== 'POST') res.status(405).end();
 
   const userId = getAuth(req).userId;
   if (!userId) {
@@ -13,7 +13,7 @@ const createHandler: NextApiHandler = async (req, res) => {
     throw new Error('no userId');
   }
 
-  const reqBody = preProductSchema.safeParse(req.body);
+  const reqBody = productSchema.safeParse(req.body);
 
   if (reqBody.success === false) {
     res.status(400).json({ message: reqBody.error.message });
@@ -23,7 +23,7 @@ const createHandler: NextApiHandler = async (req, res) => {
   const productValues = reqBody.data;
 
   try {
-    const { stripeProduct, prismaCard } = await createProduct(
+    const { stripeProduct, prismaCard } = await updateProduct(
       userId,
       productValues
     );
@@ -38,4 +38,4 @@ const createHandler: NextApiHandler = async (req, res) => {
   }
 };
 
-export default createHandler;
+export default updateHandler;
