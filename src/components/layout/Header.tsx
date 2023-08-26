@@ -56,14 +56,14 @@ const Header: React.FC<HeaderProps> = ({ brands }) => {
     <AppBar position="fixed">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <TitleComponent title="Arcane Orders" />
+          <TitleComponent title="RareHunters" />
           <MobileMenu
             anchorElNav={anchorElNav}
             handleOpenNavMenu={handleOpenNavMenu}
             handleCloseNavMenu={handleCloseNavMenu}
             pages={brands}
           />
-          <TitleComponent title="Arcane Orders" isMobile />
+          <TitleComponent title="RareHunters" isMobile />
           <DesktopMenu pages={brands} handleCloseNavMenu={handleCloseNavMenu} />
           <Tooltip title="Shopping Cart">
             <Link href="/cart">

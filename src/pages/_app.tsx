@@ -27,9 +27,9 @@ export default function MyApp({ Component, pageProps }: IMyAppProps) {
   return (
     <Provider store={store}>
       <Head>
-        <title>Arcane Orders</title>
+        <title>RareHunters</title>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
-        <meta name="description" content="arcane orders sells products" />
+        <meta name="description" content="RareHunters sells products" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ThemeProvider theme={Theme.dark}>

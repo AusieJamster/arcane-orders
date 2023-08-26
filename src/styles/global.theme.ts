@@ -10,7 +10,6 @@ const poppins = Poppins({
 const dark = createTheme({
   palette: {
     mode: 'dark',
-    // text: {},
     primary: {
       main: '#A290F9',
       dark: '#6042F5',
@@ -25,27 +24,39 @@ const dark = createTheme({
       default: '#090909',
       paper: '#121212'
     }
-    // error: {},
-    // divider: grey[200]
   },
   typography: {
-    h1: { fontSize: 30 },
-    h2: { fontSize: 28 },
-    h3: { fontSize: 26 },
-    h4: { fontSize: 24 },
-    h5: { fontSize: 22 },
-    h6: { fontSize: 20 },
-    body1: {},
-    body2: { fontSize: 12 },
-    subtitle1: {},
-    subtitle2: {},
-    caption: {},
-    overline: {},
-
     fontFamily: poppins.style.fontFamily
   }
 });
 
 const light = createTheme();
+
+light.typography.h1 = dark.typography.h1 = {
+  fontSize: 50,
+  [dark.breakpoints.down('sm')]: { fontSize: 40 }
+};
+light.typography.h2 = dark.typography.h2 = {
+  fontSize: 36,
+  [dark.breakpoints.down('sm')]: { fontSize: 28 }
+};
+light.typography.h3 = dark.typography.h3 = {
+  fontSize: 32,
+  [dark.breakpoints.down('sm')]: { fontSize: 26 }
+};
+light.typography.h4 = dark.typography.h4 = {
+  fontSize: 28,
+  [dark.breakpoints.down('sm')]: { fontSize: 24 }
+};
+light.typography.h5 = dark.typography.h5 = {
+  fontSize: 24,
+  [dark.breakpoints.down('sm')]: { fontSize: 22 }
+};
+light.typography.h6 = dark.typography.h6 = {
+  fontSize: 20
+};
+light.typography.body2 = dark.typography.body2 = {
+  fontSize: 12
+};
 
 export { light, dark };

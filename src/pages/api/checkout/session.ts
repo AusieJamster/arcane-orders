@@ -34,12 +34,12 @@ const sessions: NextApiHandler = async (req, res) => {
       customer_email: userEmail,
       line_items: cart,
       success_url: `${req.headers.origin}/order?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.origin}/cart?canceled=true`,
+      cancel_url:
+        req.body.cancelUrl ?? `${req.headers.origin}/cart?canceled=true`,
       shipping_address_collection: { allowed_countries: ['AU'] },
       billing_address_collection: 'auto'
     });
 
-    console.log('success', session);
     if (session?.url) res.status(200).json(session.url);
     else throw new GenericError(500, 'Error creating session');
   } catch (error) {

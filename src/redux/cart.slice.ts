@@ -5,17 +5,28 @@ const initialState: ICart = {
   products: []
 };
 
+const QUANTITY_DEFAULT = 1 as const;
+
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addToCart: (state, action: PayloadAction<TProduct>) => {
+    addToCart: (
+      state,
+      action: PayloadAction<{ product: TProduct; quantity?: number }>
+    ) => {
       const existingProduct = state.products.find(
         (item) =>
-          item.product.productIdentifier === action.payload.productIdentifier
+          item.product.productIdentifier ===
+          action.payload.product.productIdentifier
       );
-      if (existingProduct) existingProduct.quantity++;
-      else state.products.push({ product: action.payload, quantity: 1 });
+      if (existingProduct)
+        existingProduct.quantity += action.payload.quantity ?? QUANTITY_DEFAULT;
+      else
+        state.products.push({
+          product: action.payload.product,
+          quantity: action.payload.quantity ?? QUANTITY_DEFAULT
+        });
     },
     adjustQuantity: (
       state,

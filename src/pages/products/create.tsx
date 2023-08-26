@@ -458,10 +458,10 @@ const CreateProduct: React.FC<CreateProductProps> = ({
 
 export default CreateProduct;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps<
+  CreateProductProps
+> = async (context) => {
   const id = context.query?.id;
-
-  console.log('\u001b[1;31m id \u001b[0m', id);
 
   let product = null;
   if (typeof id === 'string') {

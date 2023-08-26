@@ -39,10 +39,6 @@ const OrderPage: NextPage<OrderPageProps> = ({ order, ...props }) => {
   );
   const [loadMore, setLoadMore] = useState(props.lineItems?.has_more ?? false);
 
-  useEffect(() => {
-    console.log(order, products);
-  }, []);
-
   const handleLoadMore = () => {
     axios
       .get<IListLineItemsResponse>(`/api/checkout/listLineItems/${order?.id}`, {
@@ -159,7 +155,9 @@ const OrderPage: NextPage<OrderPageProps> = ({ order, ...props }) => {
 
 export default OrderPage;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps<OrderPageProps> = async (
+  context
+) => {
   const id = context.query?.session_id;
 
   const stripe = getStripe();

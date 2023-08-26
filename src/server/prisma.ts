@@ -13,10 +13,6 @@ export const updatePrismaProduct = async (
   productValues: TProduct
 ) => {
   try {
-    console.log(
-      '\u001b[1;31m productValues.productIdentifier \u001b[0m',
-      productValues.productIdentifier
-    );
     return await prisma.cardProduct.update({
       where: { productId: productValues.productId },
       data: {

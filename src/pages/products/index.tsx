@@ -33,12 +33,10 @@ const Product: NextPage<ResultsPageProps> = ({ products, allCardTitles }) => {
 
   const handleAddToCart = (product: TProduct) => {
     toast(`Added ${product.title} to the cart`, { theme: 'dark' });
-    dispatch(addToCart(product));
+    dispatch(addToCart({ product }));
   };
 
   useEffect(() => {
-    setCart(store.getState().cart);
-
     const unsubscribe = store.subscribe(() => setCart(store.getState().cart));
 
     return unsubscribe;
@@ -86,7 +84,9 @@ const Product: NextPage<ResultsPageProps> = ({ products, allCardTitles }) => {
 
 export default Product;
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps<
+  ResultsPageProps
+> = async () => {
   const [products, allCardTitles] = await Promise.all([
     getAllActiveProducts(40),
     getAllCardTitles()

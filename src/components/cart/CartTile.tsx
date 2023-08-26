@@ -15,6 +15,7 @@ import { convertDollarValueToCurrency } from '@src/utils';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { QuantityChangeButton } from './QuantityChangeButton';
+import Link from 'next/link';
 
 interface CartTileProps {
   productInCart: ICart['products'][number];
@@ -61,16 +62,26 @@ const CartTile: React.FC<CartTileProps> = ({
     >
       <Stack direction="row" justifyContent="space-between">
         <Stack direction="row" gap={1}>
-          <ImageFade
-            primaryImage={primaryImage}
-            title={product.title}
-            width={80}
-            height={100}
-          />
+          <Link
+            href={`/products/${product.productIdentifier}`}
+            style={{ textDecoration: 'none' }}
+          >
+            <ImageFade
+              primaryImage={primaryImage}
+              title={product.title}
+              width={80}
+              height={100}
+            />
+          </Link>
           <Stack direction="column" justifyContent="center">
-            <Typography variant="h6" color="primary">
-              {product.title}
-            </Typography>
+            <Link
+              href={`/products/${product.productIdentifier}`}
+              style={{ textDecoration: 'none' }}
+            >
+              <Typography variant="h6" color="primary">
+                {product.title}
+              </Typography>
+            </Link>
             <Typography variant="body2" gutterBottom>
               {product.set}
             </Typography>
@@ -82,13 +93,13 @@ const CartTile: React.FC<CartTileProps> = ({
                 sx={{ maxWidth: '25%' }}
               />
               <Stack direction="column" marginRight={1}>
-                <QuantityChangeButton onClick={handleQuantityButtonClick(true)}>
-                  <ArrowDropUpIcon />
-                </QuantityChangeButton>
                 <QuantityChangeButton
                   onClick={handleQuantityButtonClick(false)}
                 >
                   <ArrowDropDownIcon />
+                </QuantityChangeButton>
+                <QuantityChangeButton onClick={handleQuantityButtonClick(true)}>
+                  <ArrowDropUpIcon />
                 </QuantityChangeButton>
               </Stack>
               <Stack>

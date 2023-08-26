@@ -27,8 +27,6 @@ const sessions: NextApiHandler = async (req, res) => {
     throw new GenericError(400, 'invalid startingAfter');
   }
 
-  console.log('\u001b[1;31m startingAfter \u001b[0m', startingAfter);
-
   try {
     const listItems = await stripe.checkout.sessions.listLineItems(id, {
       limit: 20,

@@ -1,6 +1,7 @@
 import { Button, Stack, Typography } from '@mui/material';
 import ImageFade from '@src/components/ImageFade/ImageFade';
 import { TProduct } from '@src/types/product.types';
+import { convertDollarValueToCurrency } from '@src/utils';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
 
@@ -16,7 +17,7 @@ const LOW_STOCK = 5 as const;
 const ProductTile: React.FC<ProductTileProps> = ({
   product,
   handleAddToCart,
-  stockInCart: stockInCart
+  stockInCart
 }) => {
   const primaryImage = useMemo(
     () => product.imgs.find((img) => img.isPrimary),
@@ -77,7 +78,7 @@ const ProductTile: React.FC<ProductTileProps> = ({
           color="error"
           gutterBottom
         >
-          {`$${product.priceInDollars}`}
+          {convertDollarValueToCurrency(product.priceInDollars)}
         </Typography>
       </Link>
       <Button
