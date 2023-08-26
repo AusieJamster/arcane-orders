@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { getProductWithPricingByProductIdentifier } from '@src/server/product';
-import { EMonsterType, ICart, TProduct } from '@src/types/product.types';
+import { EMonsterType, TProduct } from '@src/types/product.types';
 import {
-  Box,
   Container,
   Stack,
   Button,
@@ -17,7 +16,7 @@ import ImageFade from '@src/components/ImageFade/ImageFade';
 import { convertDollarValueToCurrency } from '@src/utils';
 import store from '@src/redux/store';
 import { useDispatch } from 'react-redux';
-import { addToCart, adjustQuantity } from '@src/redux/cart.slice';
+import { addToCart } from '@src/redux/cart.slice';
 import { ToastContainer, toast } from 'react-toastify';
 import Stripe from 'stripe';
 import axios from 'axios';
@@ -128,7 +127,6 @@ const Product: NextPage<ProductPageProps> = ({ product }) => {
           xs={12}
           md={4}
           gap={2}
-          direction="column"
           justifyContent="center"
           alignItems="center"
           display="flex"
