@@ -1,0 +1,23 @@
+name: Unit Tests
+
+on:
+  push:
+
+jobs:
+  check-standards:
+    runs-on: ubuntu-latest
+    env:
+      SKIP_ENV_VALIDATION: true
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+      - name: use node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+      - name: install / restore dependencies
+        run: npm ci
+      - name: preform code linting
+        run: npm run lint
+      - name: perform unit testing
+        run: npm run test

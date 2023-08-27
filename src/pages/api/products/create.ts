@@ -1,41 +1,41 @@
-import { getStripe } from "~/utils/stripe";
-import { NextApiHandler } from "next";
-import Stripe from "stripe";
-import type { IProductCreate } from "~/types/product.types";
+import type { NextApiHandler } from 'next';
+import { getAuth } from '@clerk/nextjs/server';
+import { preProductSchema } from '@src/types/product.types';
+import { createProduct } from '@src/server/product';
+import { GenericError } from '@src/utils/errors';
 
-const stripe = getStripe();
+const createHandler: NextApiHandler = async (req, res) => {
+  if (req.method !== 'PUT') res.status(405).end();
 
-const sessions: NextApiHandler = async (req, res) => {
-  if (req.method !== "POST") res.status(405).end();
+  const userId = getAuth(req).userId;
+  if (!userId) {
+    res.status(401).end();
+    throw new Error('no userId');
+  }
 
-  const productValues: IProductCreate = req.body;
+  const reqBody = preProductSchema.safeParse(req.body);
+
+  if (reqBody.success === false) {
+    res.status(400).json({ message: reqBody.error.message });
+    return;
+  }
+
+  const productValues = reqBody.data;
 
   try {
-    const product = await stripe.products.create({
-      name: productValues.name,
-      active: productValues.active,
-      description: productValues.description,
-      images: productValues.images,
-      shippable: false,
-      default_price_data: {
-        currency: "AUD",
-        unit_amount: productValues.price * 100,
-      },
-      unit_label: productValues.unit_label,
-      metadata: {
-        category: productValues.category || null,
-        inventory: productValues.inventory || null,
-      },
-    });
+    const { stripeProduct, prismaCard } = await createProduct(
+      userId,
+      productValues
+    );
 
-    res.status(200).json(product);
+    res.status(200).json({ stripeProduct, prismaCard });
   } catch (error) {
-    if (error instanceof Stripe.errors.StripeError) {
-      res.status(500).json(error.code);
+    if (error instanceof GenericError) {
+      res.status(error.statusCode).json({ message: error.message });
     } else {
       res.status(500).end();
     }
   }
 };
 
-export default sessions;
+export default createHandler;
