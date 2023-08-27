@@ -1,4 +1,4 @@
-import {
+import type {
   PrismaCard,
   TProduct,
   ECardSet,
@@ -7,10 +7,10 @@ import {
   ECardType,
   EMonsterType,
   ECardLinkArrows,
-  productSchema,
   TPreProduct
 } from '@src/types/product.types';
-import Stripe from 'stripe';
+import { productSchema } from '@src/types/product.types';
+import type Stripe from 'stripe';
 import prisma from '../utils/prisma';
 import { getStripe } from '../utils/stripe';
 import { createPrismaProduct, updatePrismaProduct } from './prisma';
@@ -81,7 +81,7 @@ export const getProductsWithPricingByPriceId = async (
   }) as PromiseFulfilledResult<Stripe.Price>[];
 
   const fullValidatedCardDetails: (TProduct | null)[] =
-    pricingFulfilledList.map((price, index) => {
+    pricingFulfilledList.map((price) => {
       const _card = prismaCards.find((card) => card.priceId === price.value.id);
       if (!_card) {
         console.error("can't find card linked to pricing");

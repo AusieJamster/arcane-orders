@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { PageLinks } from '@src/types/layout.types';
+import type { PageLinks } from '@src/types/layout.types';
 import DesktopMenu from './Desktop/Desktop';
 import MobileMenu from './Mobile/MobileMenu';
 import TitleComponent from './TitleComponent';

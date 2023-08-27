@@ -1,10 +1,10 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
 import ImageFade from '@src/components/ImageFade/ImageFade';
-import { TProduct } from '@src/types/product.types';
+import type { TProduct } from '@src/types/product.types';
 import { convertCentValueToCurrency } from '@src/utils';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 
 interface OrderTileProps {
   lineItem: Stripe.LineItem;

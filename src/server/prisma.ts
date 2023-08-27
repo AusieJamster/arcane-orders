@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import {
+import type {
   IStripeProduct,
   TPreProduct,
   TProduct

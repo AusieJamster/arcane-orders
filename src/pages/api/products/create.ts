@@ -1,4 +1,4 @@
-import { NextApiHandler } from 'next';
+import type { NextApiHandler } from 'next';
 import { getAuth } from '@clerk/nextjs/server';
 import { preProductSchema } from '@src/types/product.types';
 import { createProduct } from '@src/server/product';

@@ -17,6 +17,7 @@ import React, { useState } from 'react';
 import GenericAutocomplete from '@src/components/formComponents/GenericAutocomplete';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import type { TPostUploadImageFile, TProduct } from '@src/types/product.types';
 import {
   ECardAttribute,
   ECardLinkArrows,
@@ -24,15 +25,13 @@ import {
   ECardSet,
   ECardType,
   EMonsterType,
-  TPostUploadImageFile,
-  TProduct,
   productCreateCardFormSchema,
   productCreateMonsterFormSchema
 } from '@src/types/product.types';
 import FileUploadField from '@src/components/formComponents/FileUploadField/FileUploadField';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import { getProductWithPricingByProductIdentifier } from '@src/server/product';
 
 interface CreateProductProps {
@@ -176,7 +175,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({
     }
 
     action(url, body)
-      .then((res) => {
+      .then(() => {
         router.push(`/products/${cardData.data.productIdentifier}`);
       })
       .catch((err) => {

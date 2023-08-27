@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Paper,
   Stack,
@@ -14,14 +13,14 @@ import {
   useTheme
 } from '@mui/material';
 import { getProductsWithPricingByPriceId } from '@src/server/product';
-import { TProduct } from '@src/types/product.types';
+import type { TProduct } from '@src/types/product.types';
 import { getStripe } from '@src/utils/stripe';
-import { GetServerSideProps, NextPage } from 'next';
-import React, { useEffect, useState } from 'react';
+import type { GetServerSideProps, NextPage } from 'next';
+import React, { useState } from 'react';
 import OrderTile from 'src/components/order/OrderTile';
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 import axios from 'axios';
-import { IListLineItemsResponse } from '../api/checkout/listLineItems/[id]';
+import type { IListLineItemsResponse } from '../api/checkout/listLineItems/[id]';
 import { convertCentValueToCurrency } from '@src/utils';
 
 interface OrderPageProps {

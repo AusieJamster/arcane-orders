@@ -7,16 +7,16 @@ import {
   useMediaQuery,
   useTheme
 } from '@mui/material';
-import { NextPage } from 'next';
+import type { NextPage } from 'next';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import CartTile from '@src/components/cart/CartTile';
 import store from '@src/redux/store';
 import { adjustQuantity, removeFromCart } from 'src/redux/cart.slice';
-import { ICart } from '@src/types/product.types';
+import type { ICart } from '@src/types/product.types';
 import { convertDollarValueToCurrency } from '@src/utils';
 import axios from 'axios';
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 import { useRouter } from 'next/router';
 
 interface CartPageProps {}
@@ -27,7 +27,6 @@ const CartPage: NextPage<CartPageProps> = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const dispatch = useDispatch();
 
-  const [error, setError] = useState<string[]>([]);
   const [cart, setCart] = useState<ICart>(store.getState().cart);
 
   const totalPrice = useMemo(
@@ -49,8 +48,8 @@ const CartPage: NextPage<CartPageProps> = () => {
   // }, []);
 
   const checkoutDisabled = useMemo<boolean>(
-    () => error.length > 0 || cart.products.some((q) => q.quantity < 1),
-    [cart.products, error.length]
+    () => cart.products.some((q) => q.quantity < 1),
+    [cart.products]
   );
 
   useEffect(() => {
@@ -138,9 +137,9 @@ const CartPage: NextPage<CartPageProps> = () => {
                 </Grid>
               ))}
             </Grid>
-            <Typography variant="caption" color="error" textAlign="center">
+            {/* <Typography variant="caption" color="error" textAlign="center">
               {error}
-            </Typography>
+            </Typography> */}
             <Typography textAlign="end">{`Total - ${totalPrice}`}</Typography>
             <Button
               variant="contained"

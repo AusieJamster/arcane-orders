@@ -1,5 +1,5 @@
-import { CardProduct, ImageInfo } from '@prisma/client';
-import Stripe from 'stripe';
+import type { CardProduct, ImageInfo } from '@prisma/client';
+import type Stripe from 'stripe';
 import { z } from 'zod';
 
 export enum ECardLinkArrows {

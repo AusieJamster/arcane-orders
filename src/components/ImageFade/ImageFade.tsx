@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box } from '@mui/system';
 import Image from 'next/image';
-import { TImageInfo } from '@src/types/product.types';
+import type { TImageInfo } from '@src/types/product.types';
 
 interface ImageFadeProps {
   primaryImage?: TImageInfo;

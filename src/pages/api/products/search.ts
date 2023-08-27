@@ -1,4 +1,4 @@
-import { NextApiHandler } from 'next';
+import type { NextApiHandler } from 'next';
 import { searchProduct } from '@src/server/product';
 import { GenericError } from '@src/utils/errors';
 

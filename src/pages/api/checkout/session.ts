@@ -1,8 +1,7 @@
-import { User, clerkClient, getAuth } from '@clerk/nextjs/server';
-import { ICart } from '@src/types/product.types';
+import { clerkClient, getAuth } from '@clerk/nextjs/server';
 import { GenericError } from '@src/utils/errors';
 import { getStripe } from '@src/utils/stripe';
-import { NextApiHandler } from 'next';
+import type { NextApiHandler } from 'next';
 import Stripe from 'stripe';
 
 const stripe = getStripe();

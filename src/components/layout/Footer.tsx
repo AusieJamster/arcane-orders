@@ -1,6 +1,6 @@
 import { Box, Grid, useMediaQuery, useTheme } from '@mui/material';
 import React from 'react';
-import { PageLinks } from '@src/types/layout.types';
+import type { PageLinks } from '@src/types/layout.types';
 import FooterList from './FooterList';
 
 interface FooterProps {

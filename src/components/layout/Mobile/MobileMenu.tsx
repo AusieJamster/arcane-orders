@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Menu, MenuItem, Divider, Stack, Button } from '@mui/material';
-import { PageLinks } from '@src/types/layout.types';
+import type { PageLinks } from '@src/types/layout.types';
 import MenuToggle from './MenuToggle';
 import { ArcaneLink } from '../../ArcaneLink';
 import {

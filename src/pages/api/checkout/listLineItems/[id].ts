@@ -1,8 +1,8 @@
 import { getProductsWithPricingByPriceId } from '@src/server/product';
-import { TProduct } from '@src/types/product.types';
+import type { TProduct } from '@src/types/product.types';
 import { GenericError } from '@src/utils/errors';
 import { getStripe } from '@src/utils/stripe';
-import { NextApiHandler } from 'next';
+import type { NextApiHandler } from 'next';
 import Stripe from 'stripe';
 
 const stripe = getStripe();

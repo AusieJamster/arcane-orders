@@ -1,12 +1,13 @@
+import type { AutocompleteProps } from '@mui/material';
 import {
   Autocomplete,
   TextField,
-  AutocompleteProps,
   FormControl,
   FormHelperText
 } from '@mui/material';
 import React from 'react';
-import { Control, Controller, FieldValues } from 'react-hook-form';
+import type { Control } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 
 type RarityFieldAutocompleteProps<T, U extends boolean | undefined> = Omit<
   AutocompleteProps<T, U, false, false>,

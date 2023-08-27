@@ -1,14 +1,6 @@
-import {
-  Box,
-  Paper,
-  Typography,
-  Stack,
-  IconButton,
-  TextField,
-  Button
-} from '@mui/material';
+import { Paper, Typography, Stack, IconButton, TextField } from '@mui/material';
 import React from 'react';
-import { ICart } from '@src/types/product.types';
+import type { ICart } from '@src/types/product.types';
 import ImageFade from '../ImageFade/ImageFade';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { convertDollarValueToCurrency } from '@src/utils';

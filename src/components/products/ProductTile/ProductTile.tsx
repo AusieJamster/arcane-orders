@@ -1,6 +1,6 @@
 import { Button, Stack, Typography } from '@mui/material';
 import ImageFade from '@src/components/ImageFade/ImageFade';
-import { TProduct } from '@src/types/product.types';
+import type { TProduct } from '@src/types/product.types';
 import { convertDollarValueToCurrency } from '@src/utils';
 import Link from 'next/link';
 import React, { useMemo } from 'react';

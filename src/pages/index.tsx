@@ -9,8 +9,8 @@ import {
 import ProductTile from '@src/components/products/ProductTile/ProductTile';
 import store from '@src/redux/store';
 import { getAllActiveProducts } from '@src/server/product';
-import { ICart, TProduct } from '@src/types/product.types';
-import { GetStaticProps, NextPage } from 'next';
+import type { ICart, TProduct } from '@src/types/product.types';
+import type { GetStaticProps, NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addToCart } from 'src/redux/cart.slice';
@@ -30,7 +30,7 @@ const HomePage: NextPage<HomePageProps> = ({ products }) => {
   const [cart, setCart] = useState<ICart>(store.getState().cart);
 
   const handleAddToCart = (product: TProduct) => {
-    toast(`Added to the cart`, { theme: 'dark' });
+    toast('Added to the cart', { theme: 'dark' });
     dispatch(addToCart({ product }));
   };
 
@@ -72,6 +72,7 @@ const HomePage: NextPage<HomePageProps> = ({ products }) => {
         >
           {products.map((product) => (
             <ProductTile
+              key={product.productIdentifier}
               product={product}
               handleAddToCart={handleAddToCart}
               stockInCart={checkStockInCart(product)}

@@ -2,7 +2,7 @@ import { IconButton, styled } from '@mui/material';
 
 const QuantityChangeButton = styled(IconButton, {
   shouldForwardProp: (props) => !['fullHeight'].includes(props as string)
-})<{ fullHeight: boolean }>(({ theme, fullHeight }) => ({
+})<{ fullHeight?: boolean }>(({ theme, fullHeight }) => ({
   maxHeight: fullHeight ? '100%' : 20,
   borderRadius: 5,
   borderStyle: 'solid',

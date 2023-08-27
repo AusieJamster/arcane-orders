@@ -1,8 +1,8 @@
-import { NextPage } from 'next';
+import type { NextPage } from 'next';
 import { Box } from '@mui/material';
 import Header from './Header';
 import Footer from './Footer';
-import { PageLinks } from '@src/types/layout.types';
+import type { PageLinks } from '@src/types/layout.types';
 
 export interface ILayoutProps {
   children: React.ReactNode;

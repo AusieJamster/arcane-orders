@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { getAllActiveProducts } from '@src/server/product';
-import { ICart, TProduct } from '@src/types/product.types';
+import type { ICart, TProduct } from '@src/types/product.types';
 import { Autocomplete, Stack, TextField } from '@mui/material';
 import ProductTile from '@src/components/products/ProductTile';
 import { useDispatch } from 'react-redux';

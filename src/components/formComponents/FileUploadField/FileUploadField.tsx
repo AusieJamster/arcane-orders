@@ -14,7 +14,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
 import '@uploadthing/react/styles.css';
 import { UploadButton } from '@src/utils/uploadthing';
-import { TPostUploadImageFile } from '@src/types/product.types';
+import type { TPostUploadImageFile } from '@src/types/product.types';
 
 interface FileUploadFieldProps {
   imageUpdate: (images: TPostUploadImageFile[]) => void;

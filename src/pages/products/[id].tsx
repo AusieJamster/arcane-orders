@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { getProductWithPricingByProductIdentifier } from '@src/server/product';
-import { EMonsterType, TProduct } from '@src/types/product.types';
+import type { TProduct } from '@src/types/product.types';
+import { EMonsterType } from '@src/types/product.types';
 import {
   Container,
   Stack,
@@ -18,7 +19,7 @@ import store from '@src/redux/store';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '@src/redux/cart.slice';
 import { ToastContainer, toast } from 'react-toastify';
-import Stripe from 'stripe';
+import type Stripe from 'stripe';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { QuantityChangeButton } from '@src/components/cart/QuantityChangeButton';
