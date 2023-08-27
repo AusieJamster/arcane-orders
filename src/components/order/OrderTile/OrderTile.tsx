@@ -1,8 +1,8 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
+import { ArcaneLink } from '@src/components/ArcaneLink';
 import ImageFade from '@src/components/ImageFade/ImageFade';
 import type { TProduct } from '@src/types/product.types';
 import { convertCentValueToCurrency } from '@src/utils';
-import Link from 'next/link';
 import React, { useMemo } from 'react';
 import type Stripe from 'stripe';
 
@@ -31,14 +31,11 @@ const OrderTile: React.FC<OrderTileProps> = ({ lineItem, product }) => {
         <Typography>{product?.productIdentifier}</Typography>
       </TableCell>
       <TableCell>
-        <Link
-          href={`/products/${product?.productIdentifier}`}
-          style={{ textDecoration: 'none' }}
-        >
+        <ArcaneLink href={`/products/${product?.productIdentifier}`}>
           <Typography variant="h6" color="primary">
             {lineItem.description}
           </Typography>
-        </Link>
+        </ArcaneLink>
       </TableCell>
       <TableCell>{lineItem.quantity}</TableCell>
       <TableCell>

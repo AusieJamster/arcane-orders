@@ -6,7 +6,6 @@ import {
   IconButton,
   Badge
 } from '@mui/material';
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import type { PageLinks } from '@src/types/layout.types';
 import DesktopMenu from './Desktop/Desktop';
@@ -14,6 +13,7 @@ import MobileMenu from './Mobile/MobileMenu';
 import TitleComponent from './TitleComponent';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import store from '@src/redux/store';
+import { ArcaneLink } from '../ArcaneLink';
 
 interface HeaderProps {
   brands: PageLinks[];
@@ -66,13 +66,13 @@ const Header: React.FC<HeaderProps> = ({ brands }) => {
           <TitleComponent title="RareHunters" isMobile />
           <DesktopMenu pages={brands} handleCloseNavMenu={handleCloseNavMenu} />
           <Tooltip title="Shopping Cart">
-            <Link href="/cart">
+            <ArcaneLink href="/cart">
               <IconButton aria-label="Cart">
                 <Badge badgeContent={quantityInStore} color="secondary">
                   <ShoppingCartIcon />
                 </Badge>
               </IconButton>
-            </Link>
+            </ArcaneLink>
           </Tooltip>
         </Toolbar>
       </Container>

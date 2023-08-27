@@ -1,8 +1,8 @@
 import { Button, Stack, Typography } from '@mui/material';
+import { ArcaneLink } from '@src/components/ArcaneLink';
 import ImageFade from '@src/components/ImageFade/ImageFade';
 import type { TProduct } from '@src/types/product.types';
 import { convertDollarValueToCurrency } from '@src/utils';
-import Link from 'next/link';
 import React, { useMemo } from 'react';
 
 interface ProductTileProps {
@@ -48,10 +48,7 @@ const ProductTile: React.FC<ProductTileProps> = ({
 
   return (
     <Stack width={BASE_WIDTH} height={400} justifyContent="space-between">
-      <Link
-        href={`/products/${product.productIdentifier}`}
-        style={{ textDecoration: 'none' }}
-      >
+      <ArcaneLink href={`/products/${product.productIdentifier}`}>
         <ImageFade
           primaryImage={primaryImage}
           title={product.title}
@@ -80,7 +77,7 @@ const ProductTile: React.FC<ProductTileProps> = ({
         >
           {convertDollarValueToCurrency(product.priceInDollars)}
         </Typography>
-      </Link>
+      </ArcaneLink>
       <Button
         fullWidth
         variant="outlined"

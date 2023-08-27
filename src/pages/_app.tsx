@@ -19,6 +19,10 @@ interface IMyAppProps extends AppProps {
 export default function MyApp({ Component, pageProps }: IMyAppProps) {
   const brand: PageLinks[] = [
     {
+      name: 'home',
+      link: '/'
+    },
+    {
       name: 'products',
       link: '/products'
     },

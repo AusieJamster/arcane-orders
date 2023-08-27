@@ -7,7 +7,7 @@ import { convertDollarValueToCurrency } from '@src/utils';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { QuantityChangeButton } from './QuantityChangeButton';
-import Link from 'next/link';
+import { ArcaneLink } from '../ArcaneLink';
 
 interface CartTileProps {
   productInCart: ICart['products'][number];
@@ -54,26 +54,20 @@ const CartTile: React.FC<CartTileProps> = ({
     >
       <Stack direction="row" justifyContent="space-between">
         <Stack direction="row" gap={1}>
-          <Link
-            href={`/products/${product.productIdentifier}`}
-            style={{ textDecoration: 'none' }}
-          >
+          <ArcaneLink href={`/products/${product.productIdentifier}`}>
             <ImageFade
               primaryImage={primaryImage}
               title={product.title}
               width={80}
               height={100}
             />
-          </Link>
+          </ArcaneLink>
           <Stack direction="column" justifyContent="center">
-            <Link
-              href={`/products/${product.productIdentifier}`}
-              style={{ textDecoration: 'none' }}
-            >
+            <ArcaneLink href={`/products/${product.productIdentifier}`}>
               <Typography variant="h6" color="primary">
                 {product.title}
               </Typography>
-            </Link>
+            </ArcaneLink>
             <Typography variant="body2" gutterBottom>
               {product.set}
             </Typography>
