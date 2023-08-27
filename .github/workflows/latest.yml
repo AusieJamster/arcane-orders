@@ -6,6 +6,8 @@ on:
 jobs:
   check-standards:
     runs-on: ubuntu-latest
+    env:
+      SKIP_ENV_VALIDATION: true
     steps:
       - name: checkout repository
         uses: actions/checkout@v2

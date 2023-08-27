@@ -1,7 +1,6 @@
 import {
   Container,
   Divider,
-  Grid,
   Paper,
   Stack,
   Typography,
