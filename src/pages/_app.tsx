@@ -25,6 +25,10 @@ export default function MyApp({ Component, pageProps }: IMyAppProps) {
     {
       name: 'contact us',
       link: '/contact-us'
+    },
+    {
+      name: 'policy',
+      link: '/policy'
     }
   ];
 
